@@ -49,7 +49,7 @@ CELERY_ENABLE_UTC = True
 
 
 #3 切换到tasks.py的上一级目录（一定）--不是在python环境，是linux命令输入
-	celery -A tasks worker --loglevel=info
+	"""$: celery -A tasks worker --loglevel=info"""
 
 	"""
 		不要ctrl+c关掉
