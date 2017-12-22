@@ -70,9 +70,11 @@ CELERY_ENABLE_UTC = True
 
 	
 #4 打开另外一个终端，进入tasks.py的同级目录， 进入python console环境
+"""
 >>>from tasks import add
 >>>c = add.delay(3,4)
 >>> c.get(timeout=1)
+"""
 
 """
 	执行add.delay(3,4)
