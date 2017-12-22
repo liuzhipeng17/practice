@@ -82,6 +82,24 @@ CELERY_ENABLE_UTC = True
 	c.get(timeout=1), 一定要timeout，不然就是同步不是异步了
 """
 
+#5 查看存储结果
+
+"""
+我们已经设置将存储结果存储在redis;CELERY_RESULT_BACKEND = 'redis://localhost', 而且将格式为json, 在redis存储的value为string
+
+1 打开redis; 
+	redis-cli
+	
+	127.0.0.1:6379> type celery-task-meta-e3be5b2b-3549-4567-9757-ff9e72d5bd94
+	string
+	127.0.0.1:6379> get celery-task-meta-e3be5b2b-3549-4567-9757-ff9e72d5bd94
+	"{\"status\": \"SUCCESS\", \"traceback\": null, \"result\": 7, \"task_id\": \"e3be5b2b-3549-4567-9757-ff9e72d5bd94\", \"children\": []}"
+	127.0.0.1:6379> 
+
+	# 至于为什么key不是e3be5b2b-3549-4567-9757-ff9e72d5bd94， 而是前面有celery-task-meta还不是很明白
+
+
+"""
 
 
 
