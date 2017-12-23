@@ -62,3 +62,62 @@ urlpatterns = [
 	python manage.py runserver 127.0.0.1:9000
 """
 # 浏览器网页127.0.0.1:9000/xadmin
+
+# step9 注册models到xadmin
+"""
+在你的后台上，添加一个adminx.py文件
+
+"""
+# project/apps/users/adminx.py
+# -*- coding: utf-8 -*-
+import xadmin
+
+from models import EmailVerifyRecord, UserProfile
+
+
+class EmailVerifyRecordAdmin(object):
+    list_display = ['code','email','type','time_sended']
+    search_fields = ['code','email','type']
+    filter_fields = ['code','email','type','time_sended']
+
+
+xadmin.site.register(EmailVerifyRecord, EmailVerifyRecordAdmin)
+
+#step9 xadmin的全局配置
+"""
+	step: 主题配置
+	
+
+"""
+from xadmin import views
+
+
+class BaseSettingAdmin(object):
+    enable_themes = True
+    use_bootswatch = True
+
+xadmin.site.register(views.BaseAdminView, BaseSettingAdmin)
+
+# step10 设置网站名称和底部
+class SiteSettingAdmin(object):
+    site_title = u"深圳洪迈后台管理系统"
+    site_footer = u"深圳洪迈有限公司"
+	
+xadmin.site.register(views.CommAdminView , SiteSettingAdmin)
+
+# step11 将每个app下的model收缩
+class SiteSettingAdmin(object):
+    menu_style = "accordion"
+	
+# step12 设置app的中文名称， 以users app为例
+	
+"""
+apps/users/apps.py 里面修改
+
+"""
+class UsersConfig(AppConfig):
+    name = 'users'
+    verbose_name= u"用户管理"
+	
+# 同时还要在users下面的__init__.py添加以下内容“
+default_app_config = "users.apps.UsersConfig"
