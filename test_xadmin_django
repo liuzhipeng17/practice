@@ -1,0 +1,64 @@
+# 如何将xadmin集成到project
+
+
+# step1 github下载源码
+	"""git clone https://github.com/sshwsfc/xadmin"""
+
+# step2 根据requirements 下载依赖包
+	"""
+			django>=1.9.0  
+			django-crispy-forms>=1.6.0
+			django-import-export>=0.5.1
+			django-reversion>=2.0.0
+			django-formtools==1.0
+			future==0.15.2
+			httplib2==0.9.2
+			six==1.10.0
+			xlwt  --可选的，
+			xlsxwriter --可选的
+	"""
+# step3 在你的工程新建python packages : extra_apps
+	"""并右键 mark source root
+	
+	同时在settings.py里面将extra_apps目录添加到python的搜索目录内
+	sys.path.insert(0, os.path.join(BASEDIR, "extra_apps"))
+	"""
+
+# step4 将xadmin应用添加到install_app里面
+	"""
+    'xadmin',
+    'crispy_forms',
+    'reversion',
+	"""
+# step5 设置xadmin后台的中文，和当地时区
+
+LANGUAGE_CODE ="zh-hans"  # 1.8之后该
+TIME_ZONE = "Asia/Shanghai"
+USE_I18N = True
+USE_L10N = True
+USE_TZ = False  # 这个一定要改成False, 否则数据库的时间就是国际时间，UTC时间
+
+# step6 迁移xadmin数据库
+
+"""
+python manage.py makemigrations
+python manage.py migrate
+"""
+#可以看到多了四张表：xadmin-bookmark, xadmin-log, xadmin_usersettings, xadmin_userwidget
+
+
+# step7 配置xadmin的url
+
+import xadmin  
+
+urlpatterns = [
+    url(r'^xadmin/', xadmin.site.urls),
+]
+
+
+# step8 
+"""
+	python manage.py createsuperuser 
+	python manage.py runserver 127.0.0.1:9000
+"""
+# 浏览器网页127.0.0.1:9000/xadmin
