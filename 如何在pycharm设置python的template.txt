@@ -1,0 +1,10 @@
+# 如何配置pycharm python模板， 新建一个py文件，就会主动增加pycharm utf-8 , author, date等参数
+
+
+file -->setting-->搜索template-->File and Code template --> python script ---> 在右边空白处添加以下内容即可（当然你想添加你要的内容，符合Python语法即可）
+
+
+
+# -*- coding: utf-8 -*- 
+__author___ = "lzp"
+__date__ = ’$DATE $TIME'

@@ -1,0 +1,36 @@
+#django如何引入static中的css,js,images呢？
+
+# step1,首先在settings配置访问static的路径
+
+	# settings.py
+	STATIC_URL = '/static/'
+	STATICFILES_DIRS = (os.path.join(BASE_DIR,  'static'),)
+
+
+# 将static目录拷贝到project目录下
+
+	假设statci的目录结构如下;
+		-static	
+			--css
+			--images
+			--img
+			--js
+			
+# step2 在html加载static整个目录
+
+{% load statcifiles %}
+
+
+# step3 在你想添加的样式，图片里面添加
+	<link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+	
+	#这里是等效成：
+		<link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+		
+	<img class="down fr" src="{% static 'images/top_down.png' %}"/>
+	#等效成
+	<img class="down fr" src="/static/images/top_down.png"/>
+
+{% static  'css/reset.css' %}
+
+#单引号是相对static的路径。
