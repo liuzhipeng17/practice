@@ -37,6 +37,22 @@ class UserProfile(AbstractUser):
         return self.username
         # username已经是UserProfile的字段
 
+"""
+ 还要在settings.py里面设置:AUTH_USER_MODEL = "users.UserProfile"
+ 
+ 这样之后就不会生成auth.user表了，而是我们的UserProfile表，而且这个表
+ 还继承了auth.user里面字段。
+ 
+ 
+# 在其它views, 除了可以通过导入获取UserProfile model外，还可以通过一种方式
+前提是你已经在settings设置了AUTH_USER_MODEL
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model() # 这里的User就是我们的UserProfile
+
+"""	
+		
 
 # 还需要一个邮箱验证码（注册和找回密码都需要用到）， 建立一个model
 
