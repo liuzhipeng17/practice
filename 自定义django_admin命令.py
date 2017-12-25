@@ -19,9 +19,13 @@ from crontab.models import UserProfile
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        user_list = UserProfile.objects.all()
-        count = len(user_list)
-        print count
+		try:
+			user_list = UserProfile.objects.all()
+			count = len(user_list)
+		except Exception:
+			raise CommandError("UserProfile is emtpy")
+        
+        self.stdout.write("count=%s" % count)
 
 		
 # 在cmd终端运行：python manage.py test_cm 测试命令是否正常
