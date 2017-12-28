@@ -1,4 +1,5 @@
 ﻿"""
+官网https://docs.djangoproject.com/en/2.0/howto/custom-management-commands/
 自定义django-admin命令test_cm, 使得其在终端按以下格式执行 python manage.py test_cm
 
 
