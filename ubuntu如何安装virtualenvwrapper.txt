@@ -1,0 +1,34 @@
+# ubuntu下如何安装virtualenvwarpper
+
+# step1 pip install virtualenvwrapper
+
+# step2 sudo find / -name virtualenwrapper.sh
+
+
+# step3 vim ~/.bashrc 
+	# 增加下面几行
+	if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+	   export WORKON_HOME = $HOME/.virtualenvs
+	   source /usr/local/bin/virtualenvwrapper.sh
+	fi
+
+# step4 
+	source ~/.bashrc
+
+# step5
+
+	mkvirtualenv testenv
+	
+	# 安装一个干净的虚拟环境
+	mkvirtualenv --python "the path to python" --no-site-packages testenv	
+
+# workon 如果没有进入虚拟环境，可以查看到所有的env
+
+
+# workon testenv 进入到testenv环境
+
+
+# deactivate退出当前环境
+
+
+# workon test1env 在当前环境切换到test1env环境
