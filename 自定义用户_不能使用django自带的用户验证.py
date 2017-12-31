@@ -40,6 +40,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 	is_staff = models.BooleanField(_('staff'), default=False)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 	
+	"""
+	即使没有创建字段password, last_login, is_superuser, 生成表的时候，都会自动创建的
+	"""
+	
     objects = UserManager()
 
     USERNAME_FIELD = 'email'  # 注意这个属性：USERNAME_FIELD, email必须是唯一的字段，
@@ -60,6 +64,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
 		
+	# 必须补充get_full_name, 和get_short_name行数
+	def get_full_name(self):
+        '''
+        Returns the first_name plus the last_name, with a space in between.
+        '''
+        full_name = self.fullname
+        return full_name
+
+    def get_short_name(self):
+        '''
+        Returns the short name for the user.
+        '''
+        return self.fullname
 
 # 还需要自定义一个UserManger
 # member/managers.py
@@ -113,5 +130,121 @@ AUTH_USER_MODEL = 'member.User'
 		tutor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 		# 通过settings.AUTH_USER_MODEL来引用
 
-# 这种自定义是需要自己定义用户验证的，不能用django的用户验证。-- 但是我们可以自定义用户的字段，不必想django那么多的字段（浪费空间）
-# 后面再总结
+# 这种自定义是需要自己定义用户验证的，不能用django的用户验证（而且我们是通过邮件进行验证）。-- 但是我们可以自定义用户的字段，不必想django那么多的字段（浪费空间）
+
+
+# 如何使用django restframework jwt 进行验证
+
+	# step1
+	pip install django-rest-framework
+    pip install djangorestframework-jwt
+	
+	# step2 
+	INSTALL_APPS =[
+		    'rest_framework',
+ 
+	]
+	
+	#step3 
+		REST_FRAMEWORK = {
+		'DEFAULT_PERMISSION_CLASSES': (
+			'rest_framework.permissions.IsAuthenticated',  # 当然可以在views里面设置
+		),
+		'DEFAULT_AUTHENTICATION_CLASSES': (
+			'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+			'rest_framework.authentication.SessionAuthentication',
+			'rest_framework.authentication.BasicAuthentication',
+		),
+	}
+
+	# step4
+	from rest_framework_jwt.views import obtain_jwt_token
+
+	urlpatterns += [
+		url(r'^api-token-auth/', obtain_jwt_token),
+	]
+	
+	# step5
+	curl -X POST -d "email=liucpliu@sina.cn&password=Lzhpeng17" http://localhost:8000/api-auth/
+	# 返回的token
+	{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpdWNwbGl1QHNpbmEuY24iLCJ1c2VyX2lkIjoxLCJlbWFpbCI6ImxpdWNwbGl1QHNpbmEuY24iLCJleHAiOjE1MTQ1MjAyMDh9.fY_cnAoQjcOy4_L6V0sckMhMPmwaaXGYO3fUNmoBoqA"}
+
+
+
+# 很明显上面只能通过email来获取token, 通过修改backends，允许通过邮箱，mobile都可以进行验证（暂时还未实现mobile验证）
+
+	# step0 教程
+		教程https://www.djangorocks.com/tutorials/creating-a-custom-authentication-backend/creating-a-simple-authentication-backend.html
+		https://stackoverflow.com/questions/25316765/log-in-user-using-either-email-address-or-username-in-django
+
+	# step1 
+		# member/backends.py
+		# -*- coding: utf-8 -*- 
+		from django.contrib.auth.backends import ModelBackend
+		from django.contrib.auth import get_user_model
+		from django.db.models import Q
+		from django.contrib.auth.hashers import make_password, check_password
+
+		user_model = get_user_model()
+
+
+		class MyCustomBackend(ModelBackend):
+			# 允许我们post username/ email来获取token
+			def authenticate(self, username=None, password=None, **kwargs):
+				if username is None:
+					username = kwargs.get(user_model.USERNAME_FIELD)
+				try:
+					user = user_model.objects.get(Q(fullname=username)|Q(**{user_model.USERNAME_FIELD:username}))
+					if user.check_password(password):
+						return user
+					else:
+						return None
+				except user_model.DoesNotExist:
+					# No user was found, return None - triggers default login failed
+					return None
+		
+		# 目前这里，还不能实现username来获取token，要获取的需要应该要改变user的结构，因为这里提示： email是必填项
+		# 应该设置一个联合唯一:(username, email）
+			
+	# step2
+		# settings.py
+		AUTHENTICATION_BACKENDS = ( 'member.backends.MyCustomBackend', )
+		
+		# 重新post username, password 到/api_auth来获取token，进行用户验证
+	
+	# step3
+		(commitity_env) λ curl -X POST -d "email=liucpliu@sina.cn&password=Lzhpeng17" http:///localhost:8000/api-auth/
+		{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxpdWNwbGl1QHNpbmEuY24iLCJ1c2VyX2lkIjoxLCJlbWFpbCI6ImxpdWNwbGl1QHNpbmEuY24iLCJleHAiOjE1MTQ1MjMwNDB9.ucjVaGrrvx2xg-d8J_lxu3K5yaCbv-rMZ7yxtbXEoW8"}
+		D:\dode\django-wepns\wepns (master)
+	# step4
+		
+		
+# 序列化
+
+-- 注册的序列化（注册验证码序列化，只需要手机号即可）
+class RegisterVerifyCodeSerialzer(serializers.Serializer):
+    """
+    获取验证码：只需要一个手机号(邮箱)，如果采用model（比如verifyCode表来存数据，但是基本上我们设置code
+    字段为必填项。 那么注册的时候，就会要求填写那个注册验证码过来。（多余而且不知道验证是否成功）
+    所以采用serializers.Serializers，而不用serializers.ModelSerializer
+    由于没有采用ModelSerializer， 所以一定要验证mobile的唯一性。
+    如果是继承ModelSerializer<, 他会自带的Unique， 可以repr(类对象）来验证
+    """
+    mobile = serializers.CharField(max_length=11, min_length=11,
+                                   validators=[RegexValidator(
+                                       regex="^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$",
+                                       message=u"手机号码格式错误")])
+
+    def validate_mobile(self, mobile):
+        # 对mobile进行验证
+        # 1 验证是否注册，（如果是继承了ModelSerializer，它会自验证它的validator: unique）
+                # 因为mobile是user里面设置unique；但是这里不是用ModelSerializer所以必须要进行压着
+
+        # 2 验证手机号码是否合法（正则表达式， 在这里搞）
+        try:
+            user_model.objects.get(mobile=mobile)
+            raise serializers.ValidationError("This mobile already has been registed")
+        except user_model.DoesNotExist:
+            return mobile  # 这个值必须返回
+
+-- 注册页面的序列化
