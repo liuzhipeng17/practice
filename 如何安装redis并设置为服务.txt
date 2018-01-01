@@ -1,0 +1,82 @@
+
+0 如何安装redis
+	
+            $ wget http://download.redis.io/releases/redis-4.0.6.tar.gz
+            $ tar xzf redis-4.0.6.tar.gz
+            $ cd redis-4.0.6
+            $ make  # 编译，需要先安装gcc
+            $ make install  # 安装成功之后，会自动将可执行文件（6个）拷贝到/etc/init.d/里面
+        
+        -- 安装成功之后
+            -- 输入命令redis-server，启动redis服务
+            
+        -- 测试，进入自带的redis客户端: 输入命令redis-cli
+            -- 输入ping,会返回PONG，说明安装成功
+
+	
+1、配置服务脚本
+	
+	# step1 
+		redis源码目录下有个utils目录，里面有redis_init_script文件，将其拷贝到/etc/init.d/目录下，并重名为redisd
+		
+		sudo cp utils/redis_init_script /etc/init.d/redisd
+	
+	# step2 
+		修改该文件
+		sudo vim /etc/init.d/redisd
+		
+		# redisd
+		REDISPORT=6379
+		EXEC=/usr/local/redis/bin/redis-server
+		CLIEXEC=/usr/local/redis/bin/redis-cli
+
+		PIDFILE=/var/run/redis_${REDISPORT}.pid
+		CONF="/etc/redis/${REDISPORT}.conf"
+		
+
+2、配置文件
+
+	# setp1 源码根目录下有个redis.conf的配置文件，复制并修改名称，注意这个名称和上面的/etc/redis/${REDISPORT}.conf的配置对应。
+
+		sudo mkdir /etc/redis
+		sudo cp redis.conf /etc/redis/6379.conf
+	
+	# step2 打开文件修改的内容如下：
+
+		#设置后台运行
+		daemonize yes  
+		#设置log文件路径
+		logfile /vagrant_data/var/log/redis/redis-server.log  
+		#设置持久化文件存放路径
+		dir /vagrant_data/var/lib/redis 
+		注意：上面的几个目录是没有的，需要事后创建文件夹
+	# step3
+		sudo mkdir -p /vagrant_data/var/log/redis
+		sudo mkdir -p /vagrant_data/var/lib/redis
+
+3、使用update-rc.d注册服务
+
+	#设置服务脚本有执行权限
+	sudo chmod +x /etc/init.d/redisd
+	#注册服务
+	cd /etc/init.d/
+	sudo update-rc.d redisd defaults
+
+4、服务常用命令
+
+	#启动Redis服务
+	sudo service redisd start  
+	#关闭服务
+	sudo service redisd stop  
+	#重启服务：
+	sudo service redisd restart  
+
+5、排错
+
+	上面设置的服务不一定能正常启动，通常可以使用/etc/init.d/redisd start运行，然后进去/var/log/redis/目录下查看日志来排除错误，这个路径就是服务脚本设置的路径。
+
+ 
+
+参考：
+
+http://blog.csdn.net/softwave/article/details/53838194

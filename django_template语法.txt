@@ -1,0 +1,17 @@
+# 官网https://docs.djangoproject.com/en/2.0/ref/templates/builtins/#slice
+
+# slice过滤（切片）
+{{ some_list|slice:":2" }} 
+
+If some_list is ['a', 'b', 'c'], the output will be ['a', 'b'].
+
+
+# 模板获取路径
+{% url 'url_name' %}
+
+url_name为urls.py中name参数的值
+
+# 模板遍历字典
+{% for k, v in defaultdict.items %}
+    Do something with k and v here...
+{% endfor %}

@@ -22,7 +22,7 @@
 	REST_FRAMEWORK = {
 		'DEFAULT_PERMISSION_CLASSES': (
 			'rest_framework.permissions.IsAuthenticated',
-		),
+		), # 最好不要在这添加权限，这里是全局权限，如果是未鉴权用户，就访问不了
 		'DEFAULT_AUTHENTICATION_CLASSES': (
 			'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
 			'rest_framework.authentication.SessionAuthentication',
@@ -30,6 +30,7 @@
 		),
 	}
 
+	
 	
 # 设置一个url，通过post用户的username和password就能获取用户的token
 	from rest_framework_jwt.views import obtain_jwt_token
