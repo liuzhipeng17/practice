@@ -50,8 +50,8 @@ class Reply(models.Model):
         (1, 'reply')    # 这是对回复A的回复B，此时reply_id， 就是回复A的id
     )
     comment_id = models.PositiveIntegerField() # 评论id,将所有评论和回复都挂在某一篇文章下
-    reply_id = models.PositiveIntegerField() # 回复那条评论（或者评论的回复）的id
-    reply_type = models.PositiveIntegerField(choices=REPLY_TYPE, default=0)
+    #reply_id = models.PositiveIntegerField() # 回复那条评论（或者评论的回复）的id
+    #reply_type = models.PositiveIntegerField(choices=REPLY_TYPE, default=0)
     content = models.TextField(max_length=200)
     from_uid = models.PositiveIntegerField(default=0, )#发表回复的用户id
     to_uid = models.PositiveIntegerField() # 目标用户的id
