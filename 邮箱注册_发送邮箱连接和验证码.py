@@ -3,13 +3,16 @@
 	# -*- coding: utf-8 -*-
 	import random
 	from django.core.cache import cache
+	
+	
+	random_code_fun =  lambda x : ''.join(random.sample('AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqXxYyZz0123456789', x))
 
 
+	print random_code_fun(5)
 
+	"""
 	def generate_random_code(email=None, random_length=8):
-		"""
-		生成8位随机字母或数字
-		"""
+	
 		temp_char = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqXxYyZz0123456789"
 		length = len(temp_char)
 		str = ""
@@ -24,7 +27,9 @@
 
 	if __name__ == "__main__":
 		print generate_random_code()
-		
+	"""
+	
+	
 		
 # step2 如何在django发送email
 	

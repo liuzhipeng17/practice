@@ -5,7 +5,8 @@
             $ tar xzf redis-4.0.6.tar.gz
             $ cd redis-4.0.6
             $ make  # 编译，需要先安装gcc
-            $ make install  # 安装成功之后，会自动将可执行文件（6个）拷贝到/etc/init.d/里面
+			$ make test
+            $ sudo make install  # 安装成功之后，会自动将可执行文件（6个）拷贝到/etc/init.d/里面
         
         -- 安装成功之后
             -- 输入命令redis-server，启动redis服务
@@ -45,11 +46,17 @@
 
 		#设置后台运行
 		daemonize yes  
+		
 		#设置log文件路径
 		logfile /vagrant_data/var/log/redis/redis-server.log  
+		
 		#设置持久化文件存放路径
 		dir /vagrant_data/var/lib/redis 
+		
+		# 修改pidfile
+		pidfile /
 		注意：上面的几个目录是没有的，需要事后创建文件夹
+		
 	# step3
 		sudo mkdir -p /vagrant_data/var/log/redis
 		sudo mkdir -p /vagrant_data/var/lib/redis

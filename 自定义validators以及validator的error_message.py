@@ -1,4 +1,17 @@
 # custom serializer field validator and custom serialzer validation(Field_level, Object_level)
+
+# 首先要关注serializer的验证顺序，然后重新对应的函数，就可以自定义validation了
+
+	Validation is run in a specific, undocumented order
+
+	1 Field deserialization called (serializer.to_internal_value and field.run_validators)
+	2 serializer.validate_[field] is called for each field
+	3 Serializer-level validators are called (serializer.run_validation followed by serializer.run_validators)
+	4 serializer.validate is called
+	
+	# 因此，只要重写def to_internal_value(self, data)函数， 定义field 的 validator（然后添加到参数validators), 重写validate_field， 
+
+
 	
 """
 这里主要介绍：custom field valiation, custom validator, custom valiationerror message
@@ -89,8 +102,9 @@
 	profile_dict_c = serializers.ImageField(validators=[ImageSizeValidtor(max_size=20)])
 		
 		
+		
 	# 补充
-	 # 自定义validator， 可以定义一些公用field都用到的validator,也可定义某个field用到的validator
+	# 自定义validator， 可以定义一些公用field都用到的validator,也可定义某个field用到的validator
 
 
 	# my_app/validators.py
