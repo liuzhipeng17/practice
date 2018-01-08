@@ -106,15 +106,3 @@
 	
 	-- 用户验证后：，需要设置头字段X_USERNAME填充用户的名字
 	
-# 使用第三方包来进行用户验证
-JSON Web Token Authentication
-
-jwt:是一种基于token的用户验证机制，和内置的token验证机制不一样，jwt不需要用数据库存储token。
-目前，有两个第三方的jwt包，可以使用。
-djangorestframework-jwt  https://github.com/GetBlimp/django-rest-framework-jwt
- djangorestframework-simplejwt https://github.com/davesque/django-rest-framework-simplejwt
- 
- # 为什么要使用jwt呢
- 
- 有两个原因: 一是drf内置的token是存储在数据库的。用户每发一个请求（需要验证的），都需要都数据库查询一次，如果用户量大的话，效率就会大大降低
-			另外一个原因是：drf的token存储在数据库，如果是分布式的，每台服务器都需要到数据库服务器上面查询。 不适合单点登录的场景。

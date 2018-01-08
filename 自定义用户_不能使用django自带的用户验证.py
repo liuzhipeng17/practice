@@ -148,7 +148,7 @@ AUTH_USER_MODEL = 'member.User'
 	#step3 
 		REST_FRAMEWORK = {
 		'DEFAULT_PERMISSION_CLASSES': (
-			'rest_framework.permissions.IsAuthenticated',  # 当然可以在views里面设置
+			'rest_framework.permissions.IsAuthenticated',  # 当然可以在views里面设置, 最好先不要在这里设置
 		),
 		'DEFAULT_AUTHENTICATION_CLASSES': (
 			'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -219,9 +219,5 @@ AUTH_USER_MODEL = 'member.User'
 	# step4
 		
 		
-# 序列化
-
--- 注册的序列化（注册验证码序列化，只需要手机号即可）
-	请看文件  自定义注册验证码serializer.py
 
 

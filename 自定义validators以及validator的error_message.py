@@ -143,10 +143,11 @@
   
   
   
-
+# 重新定义required的错误message，
+code = serializer.CharField(required=True, min_length=12, max_length=13,
+								error_message = {
+								'blank': '请输入验证码',
+								'max_length': '',
+								}
 			
-# step5 向用户注册的序列化（最好不要继承ModelSerialzier)
-"""
-因为注册的时候，需要填写： 用户名，密码，验证码，二次密码确认，最好继承Serializr.serializer
-"""
   

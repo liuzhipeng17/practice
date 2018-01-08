@@ -1,0 +1,42 @@
+http://www.django-rest-framework.org/api-guide/fields/
+
+Read-only
+	read-only fields只会包含在序列化的输出字段中，序列化时输入的read-only字段就会被忽略。
+	将其设置为True可确保在序列化表示时使用该字段，而在反序列化期间创建或更新实例时不使用该字段。
+	# 就是说：用户不用提交该字段数据，但是在序列化的时候，我会将其给你返回
+	
+Write-only
+	将write-only设置为True的时候，该字段只有在更新或者创建的时候才会用到。 序列化的时候不会用到。validate_data里面不会有该字段。
+	password应该要这是为write-only
+	
+	# 也就是说，用户可以提交该字段，但是在序列化的时候，不会有这个字段的内容（serializer.data里面不会有该字段的值）
+	
+	
+required
+	如果在反序列化过程中没有提供字段，通常会出现错误（因为requeired默认True)。 如果在反序列化过程中不需要此字段，则设置为false。
+
+	将其设置为False还允许在序列化实例时从输出中省略对象属性或字典密钥。 如果密钥不存在，它将不会包含在输出表示中。
+	
+	
+allow_null
+	# 针对是序列化过程，也就是说： 在response（序列化的时候），如果该字段是空的话，而且allow_null=False，那么就会抛出异常。
+	# 
+
+	默认为False
+	如果None传递给序列化程序字段，通常会引发错误。 如果None应被视为有效值，则将此关键字参数设置为True。
+
+	请注意，将此参数设置为True将意味着序列化输出的默认值为null，但意味着输入反序列化的默认值。
+	
+	是在return Response那里（将原生的python数据如字典）序列化成json数据
+
+allow_blank
+	# 是针对反序列过程，如果用户提交的该字段是空值，而且allow_blank=False,那么在反序列的时候，就会抛出异常
+	 If set to True then the empty string should be considered a valid value. 
+	 If set to False then the empty string is considered invalid and will raise a validation error. Defaults to False
+
+
+style	serializer如何将password变成密文：style参数
+
+password = serializers.CharField(
+    style={'input_type': 'password'}
+)
