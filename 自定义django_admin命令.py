@@ -3,7 +3,7 @@
 自定义django-admin命令test_cm, 使得其在终端按以下格式执行 python manage.py test_cm
 
 
-首先在你的app目录下新建 python package: mamagement
+首先在你的app目录下新建 python package: management
 然后在你的management目录新建python package: commands
   
 接着在commands目录新建python文件test_cm.py
