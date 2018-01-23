@@ -1,0 +1,49 @@
+# 微信发送红包
+
+
+
+def sendpack_help_wuser(act,wishing,to_whom,amount):
+
+	url = 'https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack'
+	t = loader.get_template('wechat/redpack.xml')
+
+	stringA = ''
+	pack = {}
+
+	act_name = act
+	send_name = u'磁易购'
+	wishing = wishing
+
+	pack['act_name']= act_name
+	pack['client_ip']= settings.WECHAT_CLIENT_IP
+	pack['mch_billno']= settings.WECHAT_MCHID + datetime.date.today().strftime("%y%m%d")+ genRandomten()
+	pack['mch_id']=settings.WECHAT_MCHID
+	pack['nonce_str']= genNonce()
+	pack['re_openid']= to_whom.openid
+	pack['remark']='remark'
+	pack['send_name']= send_name
+	pack['total_amount']= str(amount)
+	pack['total_num']='1'
+	pack['wishing']= wishing
+	pack['wxappid']= settings.WECHAT_APPID_ECMAGNET
+
+	pack = collections.OrderedDict(sorted(pack.items()))
+
+	for key, value in pack.iteritems():
+	    stringA += key + '=' + value + '&'
+
+	stringSignTemp= stringA + 'key=' + settings.WECHAT_PAY_API_KEY
+
+	m = hashlib.md5()
+
+	m.update(stringSignTemp)
+
+	pack['sign'] = m.hexdigest()
+
+	t = loader.get_template('wechat/redpack.xml')
+
+	data = t.render(pack)
+
+	result = post_ssl_url_data(url,data)
+
+	return result

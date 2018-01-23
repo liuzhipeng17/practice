@@ -1,0 +1,6 @@
+# 要想头像带上http://, serializer的时候必须要带上context
+
+    def get(self, request, comment_id, format=None):
+        comment = self.get_object(comment_id)
+        serializer = self.serializer_class(comment, context={'request': request}) # 必须要带上request,否则不会http
+        return Response(serializer.data, status=status.HTTP_200_OK)

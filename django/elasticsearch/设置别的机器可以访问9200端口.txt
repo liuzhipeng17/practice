@@ -1,0 +1,26 @@
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/setting-system-settings.html#limits.conf
+
+# vim ./config/elasticsearch.yml
+
+	network.host: 0.0.0.0
+	
+# 接着会报错误：
+ERROR: [1] bootstrap checks failed
+[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65536]
+
+	-- 方法1（还
+		# 修改配置文件： /etc/security/limit.conf 
+
+			增加以下文件：
+			elasticsearch  -  nofile  65536  # 
+			
+		# 同时etc/pam.d/su 取消注释下面的一行：
+			# session    required   pam_limits.so
+			
+	-- 方法2 
+		su 
+		
+		ulimit -n 65536
+		
+		然后重新启动

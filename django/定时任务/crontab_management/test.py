@@ -1,0 +1,1 @@
+# 自定义manage命令成功后，就可以写crontab脚本，来实现crontab

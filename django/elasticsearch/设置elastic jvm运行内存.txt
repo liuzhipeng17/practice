@@ -1,0 +1,10 @@
+# 方式1
+	vim /etc/elasticsearch/jvm.options 
+	
+	将-Xms1g -Xmx1g改成
+	
+	 -Xms512m -Xmx512m
+	
+# 方式2：
+	ES_JAVA_OPTS="-Xms512m -Xmx512m" ./bin/elasticsearch
+	

@@ -1,0 +1,31 @@
+# 下载https://github.com/mobz/elasticsearch-head
+
+# 安装Node,要求>6.0
+
+	# Using Ubuntu
+	curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+	sudo apt-get install -y nodejs
+	
+	
+	# 检查版本是否大于6.0 
+	node -v
+	
+	
+# 安装head插件
+	解压zip文件
+	cd elasticsearch-head
+	npm install   # 由于我是在vagrant虚拟机装的，这条命令改成 npm install  --no-bin-links
+	
+	# 还要安装grunt
+	sudo npm install -g grunt-cli
+
+	npm run start
+	
+# 打开open http://localhost:9100/
+
+
+# 修改跨域问题（运行其他机器访问）
+	vim ./elasticsearch6.1/config/elasticsearch.yml
+	
+	http.cors.enabled: true
+	http.cors.allow-origin: "*"

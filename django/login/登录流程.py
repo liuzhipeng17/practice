@@ -1,0 +1,1 @@
+# login url 直接渲染静态页面login.html, 前端发送ajax请求， url: /api-auth-token  这样就通过了jwb 实现验证， 登录。

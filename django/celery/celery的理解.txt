@@ -1,0 +1,29 @@
+celery 异步处理需要传递消息和处理任务和存储结果， 采用经典的生产-消费者模式
+
+celery包含三个结构：broker（消息队列）、workers（消费者：处理任务）、backend（存储结果）
+
+应用场景：web前端发送一个请求， 只需要将请求要处理的任务丢给borker, 由空闲的worker去执行任务，处理的结果会存储在backend中。
+
+ps：  celery现在已经统一为一个版本，不要再用django-celery
+
+broker:  推荐使用RabbitMQ, redis(这两个都可以在生成环境上使用）
+
+
+
+# step1 django设置broker， backend等(用redis作为消息队列， backend也是用redis)
+	BROKER_URL = 'redis://localhost:6379'
+	CELERY_RESULT_BACKEND = 'redis://localhost:6379'     
+	CELERY_ACCEPT_CONTENT = ['application/json'] 
+	CELERY_TASK_SERIALIZER = 'json' 
+	CELERY_RESULT_SERIALIZER = 'json' 
+	CELERY_TIMEZONE = 'Asia/Shanghai'
+	
+# step2 安装celery
+	pip install celery==3.1.25
+	pip install redis
+	
+# step3 如何将celery集成到django
+	详情请看
+	"将celery集成到django.py"
+	"如何查看redis相关任务的key.txt"
+	

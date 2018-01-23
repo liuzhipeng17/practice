@@ -1,0 +1,17 @@
+# 打开网址https://www.elastic.co/
+
+	-- 选择download, 选择tar版本elasticsearch-6.1.1.tar.gz
+	
+	
+# 进入到下载目录：
+	tar -xvf elasticsearch-6.1.1.tar.gz
+	
+# 执行
+	./bin/elasticsearch
+	
+# 后台启动 
+
+	./bin/elasticsearch -d
+	
+# 如果内存不足
+	ES_JAVA_OPTS="-Xms2g -Xmx2g" ./bin/elasticsearch
