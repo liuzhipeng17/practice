@@ -1,0 +1,24 @@
+create index ix_name_email_exc on student(name,email,exc);
+
+最左前缀匹配：
+    select * from student where name = 'alex'; -- 会走索引
+    select * from student where email = 'aa'; -- 会走索引 ？有疑问
+    select * from student where name = 'alex' and exc='abb'; --会走索引
+
+    select * from student where exc = 'bb' -- 不会走索引
+    select * from student where emial ='cc' and exc ='bb'； --不会走索引
+
+    虽然有顺序，但是其效率是比索引合并要高的
+
+
+     组合索引：方式1
+        create index ix_name_email on student(name,email);
+        select * from student where name ='lz’and email = 'adfd';
+        select * from student where name ='lz’；
+
+     索引合并：方式2(要根据业务确定用单列索引还是组合索引）
+        create index ix_name on student(name);
+        create index ix_email on student(email);
+        select * from student where name ='lz’and email = 'adfd';
+        select * from student where name ='lz’；
+        select * from student where email ='adfd’

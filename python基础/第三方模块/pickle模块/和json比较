@@ -1,0 +1,10 @@
+# pickle和json比较：
+1 JSON是一种文本序列化格式(它输出unicode文本，尽管大多数时间它被编码为utf - 8)，
+  而pickle则是二进制序列化格式;
+
+2 JSON是人类可读的，而pickle则不是;（pickle是二进制）
+
+3 JSON在Python之外是可互操作和广泛使用的，而pickle则是特定于Python的;
+
+4 默认情况下，JSON只能表示Python内置类型的一个子集，而没有自定义类;
+  pickle可以表示极其大量的Python类型

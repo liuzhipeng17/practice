@@ -1,0 +1,42 @@
+# os模块
+
+# os.getcwd() # 获取当前工作目录
+
+# os.chdir(） # 改变工作目录
+# os.curdir()
+# os.makedirs() # 递归创建多级目录
+# os.removedirs(dirname) # 如果dirname是空目录，则会删除dirname；并且会递归到dirname的父目录，
+# 如果dirname的父目录是空，则会上dirname父目录，并递归到dirname的爷目录
+
+# os.mkdir(dirname) # 创建单级目录
+# os.rmdir(dirname) # 删除单级目录，只有在dirname为空文件夹才会删
+
+# os.listdir(dirname) # 显示该目录下的文件和子文件夹
+
+# os.state 返回的是一个结构化对象，st_mtime最后一次修改时间（标签的意思，缓存到最新的修改时间）
+st_size= 字节为单位
+
+# os.sep 路径分隔符 win: "\\", linu:"/"
+# os.linesep 行分隔符 win: \t\n linux:\n
+# os.pathsep 路径分隔符 win: ";" linux: ":"
+
+# os.name : 判断当前平台是win or linx:
+# win: nt, linux: posix
+
+# os.system("cmd")  运行系统的命令
+    os.system("dir") windows查看目录下的详细信息
+
+# os.environ
+
+# os.path.abspath():绝对路径
+# os.path.basename(): 文件名（包括后缀）
+# os.path.dirname():文件所在目录
+
+# os.path.exists():
+# os.path.isdir()
+# os.path.isfile()
+
+# os.path.join()# 路径拼接
+
+# os.path.getatime(path):目录/文件最后存取时间
+# os.path.getmtime(path):目录、文件最后修改时间

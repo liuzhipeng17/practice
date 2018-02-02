@@ -1,0 +1,16 @@
+# 给某个查询语句设置别名，方便后面使用--这个过程就称为创建视图
+# 视图是一张虚拟表，动态从物理表查询数据；不能向视图插入数据（修改都不行）
+
+# 创建视图
+    create view v1 as select * from tb where sid >10
+    create view 视图名称  as sql查询语句
+
+# 使用视图
+    select * from v1  效果和select * from tb where sid >10一样
+
+# 修改视图里面的sql语句
+    alter view v1 as 新的sql
+
+# 删除视图
+    drop view v1
+

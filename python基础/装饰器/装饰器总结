@@ -1,0 +1,20 @@
+#1 闭包总结
+    - 闭包定义
+        闭包：内部函数的代码包含对外部作用域名字的引用，但不是对全局作用域名字的引用
+
+        更容易理解：闭包是一种定义在某个作用域A的函数，这个函数应用了作用域A的变量
+
+        在Python中，函数是一级对象(first-class object)，
+        可以直接引用函数,可以把函数赋给变量，还可以把函数当做参数传给其他函数，
+
+        闭包返回的不仅仅函数，还包括了相关变量
+
+    - 闭包例子
+        def sort_priority(values, group):
+            def helper(x):
+                if x in group:
+                    return (0,x)
+                else:
+                    return (1,x)
+
+            values.sort(key=helper)

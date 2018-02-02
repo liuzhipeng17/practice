@@ -1,0 +1,18 @@
+# 唯一索引
+    #唯一： 列值不允许重复
+    #索引： 加速查找
+    #可以允许多列组合作为唯一索引，称为唯一联合索引
+    #和主键不同：
+        #可以允许一个值为空
+        #主键不允许值为空
+
+#2 创建
+
+    create table t1(
+        id int auto_increment primary key,
+        identity int,
+        unique uq_identity (identity)
+    );
+
+#3 创建语法
+    unique 唯一索引名 (列1，列2)

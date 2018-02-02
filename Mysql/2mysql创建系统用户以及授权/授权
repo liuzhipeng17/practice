@@ -1,0 +1,21 @@
+# 创建了用户，现在用户是什么权限都木有的（权限：是指对文件夹（数据库），文件（表）的权限）
+
+# 主要因素： 对什么人，赋予什么文件什么权限（哪个文件，增删改查权限）
+grant 权限 on 文件 to 人
+
+grant select,insert,update,delete on db1.* to 'username'@'192..%'
+
+grant all privileges on db1.* to 'username'@'192..%'
+# 赋予所有权限
+
+grant all privileges on *.* to 'username'@'192..%'
+
+
+查看权限：
+show grants for 'user'@'ip'
+
+# 赋予权限
+grant 权限 on 数据库.表 on 'user'@'ip'
+
+# 取消权限
+revoke 权限 on 数据库.表 from 'user'@'ip'

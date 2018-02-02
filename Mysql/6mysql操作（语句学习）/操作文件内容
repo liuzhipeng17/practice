@@ -1,0 +1,22 @@
+# 插
+insert into t1(id,name) values(1,'lzp') ；
+
+# 改
+update t1 set name='liz' where name='lzp';
+
+# 查
+select name, age from t1 where
+
+# 删
+delete from t1; # 下次再插数据，id(自增列）会在原来基础上继续增加
+truncate t1；# 下次插数据，id从1开始
+
+# 查看表的结构
+desc t1;
+
+# 查看表设计的sql语句
+show create table t1 \G；
+
+# 设计自增列的开始值;
+    # show create table t1 \G; 查看自增列的，下一个值
+    # alter table t1 AUTO_INCREMENT=10; 设置自增列的开始值为10

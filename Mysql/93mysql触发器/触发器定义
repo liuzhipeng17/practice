@@ -1,0 +1,48 @@
+#0 触发器定义
+    触发器就和Python的装饰器作用类似，在执行某张表做增删改时，可以使用触发器，自定义关联行为。
+    查询select 不会引发行为,其他的都有：insert, update, delete
+
+#1 insert之前，执行动作
+    create trigger tri1(触发器名字) before insert on tb1(表名） for each row
+    begin
+    ... # 在向表tb1插入一条数据之前，都会执行begin end之间的代码
+    end
+
+#2 完整的语法： 要修改终止符delimiter
+
+    delimiter  //  -- 修改sql语句终止符为//
+    create trigger tri_1 before insert on student for each row  -- 受影响的行，就会执行多少次begin end
+    begin
+        insert into teacher(name) vaules('aaa');
+    end
+    //  -- 这里表名创建触发器语句执行完了
+    delimiter ; -- 将sql语句的终止符改成原来的分号;
+
+#3 在begin end之间获取新插入数据对象NEW
+    创建触发器tri_1之后，执行insert into student(sname) values('lzp'),('alex');
+    就会想teacher里面插入两条aaa数据;
+
+    可以看到begin end 插入的值是写死的，如果我们想获取新插入student的数据呢？
+    NEW，表示要插入的数据行
+
+    所以：
+    delimiter  //
+    create trigger tri_1 before insert on student for each row
+    begin
+        insert into teacher(name) vaules(NEW.sname);
+    end
+    //
+    delimiter ;
+
+
+
+#4 NEW代表新数据（要插入的数据行，update之后的数据行）
+
+#5 OLD代表老数据，（delete之前的数据行，update之前的数据行）
+
+
+#4 insert之后
+    create trigger tri1(触发器名字) after insert on tb1(表名） for each row
+    begin
+    ... # 在向表tb1插入一条数据之前，都会执行begin end之间的代码
+    end

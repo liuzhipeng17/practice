@@ -1,0 +1,26 @@
+1. ../ftp_task/ftp/ 为工程核心目录，
+        db为用户数据库,文件保存用户账号和密码（加密）
+        dir包含home(server工作目录），downloads(clien工作目录）
+        bin目录active_client.py 和active_server为启动可执行文件
+        conf目录settings为配置文件
+
+2. 学习笔记：暂无
+
+3. 流程图链接：https://www.processon.com/diagraming/59a77bbbe4b0dd828abf235c
+
+4. 用户表../ftp/db/userdb.ini文件中， 密码为123
+
+5. 使用方法（先后运行）
+    1）普通脚本运行，服务端端口，和ip地址可从脚本参数读取，默认是(127.0.0.1,8080)
+    ftp_task/ftp/bin/active_server.py
+    ftp_task/ftp/bin/active_client.py
+
+    2）输入用户名和密码（Lzp, 123)
+
+    3) 输入命令;
+        dir  查看当前目录详细信息
+        pwd  返回当前目录
+        cd   切换目录
+        get filename 下载文件
+        put filename 上传文件
+

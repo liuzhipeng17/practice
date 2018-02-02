@@ -1,0 +1,25 @@
+#变量方式使用  
+{% load staticfiles %}  
+<link rel="stylesheet" href="{% static user_stylesheet %}" type="text/css" media="screen"/>  
+
+
+# 磁易购使用：
+
+# project/app settings.py 设置
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_URL = 'http://s.ciyigou.com/static/'
+
+
+{% load staticfiles %}
+<a href="#">
+	<img src="{% static 'share/images/adv1.png' %}" alt="">
+</a>
+
+# 得到的结果为：
+<a href="#">
+	<img src="http://s.ciyigou.com/static/share/images/adv1.png" alt="">  
+</a>
+
+

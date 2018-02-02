@@ -1,0 +1,14 @@
+# 创建这个系统用户lzp，通过命令 mysql -u lzp -p 能够连接mysql服务端，
+# 查看目前有多少个系统用户（在文件夹data/mysql/user文件里面，查看文件有root行）
+# mysql是文件操作，文件夹（data)
+                        文件夹（数据库sys,mysql)
+                            文件user
+                                行（root）
+
+# 创建用户，就是要实现在user文件里面添加了行lzp。但是是不能直接添加的，需要通过Mysql语言来实现
+
+# create user 'username'@'192..%' identified by '123'
+# 表示创建了用户username, 并且该用户只能在192.开头的网址登陆，密码为123
+
+
+

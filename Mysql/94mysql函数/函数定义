@@ -1,0 +1,25 @@
+#1 内置函数
+    官网网址：https://dev.mysql.com/doc/refman/5.7/en/functions.html
+
+#2 自定义函数
+
+    #1 创建函数语法
+        delimiter //
+            create function f1(
+                i1 int,
+                i2 int)
+            returns int  -- 是returns 不是return
+            begin  -- 代码块里面的每一句分号不能少（经常忘记）
+                declare num int default 0；
+                set num = i1 + i2；
+                return num；
+            end
+            //
+        delimiter ;
+
+    #2 调用函数
+        select f1(1,100);
+
+    #3 函数体内不能含有select * from 这种语句
+
+    #4 函数是有return值

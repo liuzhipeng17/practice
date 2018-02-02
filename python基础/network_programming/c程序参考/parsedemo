@@ -1,0 +1,445 @@
+/*
+ * Copyright (c) 2008-2016 Allwinner Technology Co. Ltd.
+ * All rights reserved.
+ *
+ * File : testParser.c
+ * Description : Parser demo
+ * History :
+ *
+ */
+
+#include <stdio.h>
+#include <pthread.h>
+#include "CdxParser.h"
+#include <string.h>
+#include <stdlib.h>
+#include "cdx_log.h"
+#include <libgen.h>
+#include <cdx_config.h>
+#include "vdecoder.h"
+#include <openssl/md5.h>
+
+#define        TEST_PASER_FETCH    (0)
+#define        TEST_PARER_TYPE        (1)
+#define        TEST_MD5CMP            (1)
+#define        TEST_STREAM_OTHER    (1)
+#define        TEST_STREAM_VIDEO_READ    (0)
+
+#define DEBUG  "debug"
+
+#define LOG_INFO(level,format,...) \
+        do{\
+                fprintf(stdout,"[%s|%s@%s,%d]" format "\n",\
+                level,__func__,basename(__FILE__),__LINE__,##__VA_ARGS__);\
+        }while(0)
+
+
+typedef enum {
+    INPUT,
+    OUTPUT,
+    HELP,
+    INVALID,
+    STREAM
+}ARGUMENT_T;
+/*define a enum type,its value can only be INPUT OUTPUT INVALID*/
+
+typedef struct {
+    char SimpleName[8];
+    char Name[128];
+    ARGUMENT_T argument;
+    char comment[128];
+}argument_t;
+
+typedef struct parserdemo
+{
+    cdx_bool forceExit;
+    char *pInputFile;
+    char *pOutputFile;
+    char *pInputStream;
+    CdxDataSourceT     source;
+    CdxStreamT *stream ;
+    CdxParserT *parser;
+    CdxMediaInfoT mediaInfo;
+    pthread_mutex_t mutex;
+
+}psrDemo;
+
+static const argument_t ArgumentMap[]=
+{
+    {"-h","--help",HELP,"Print the help"},
+    {"-i","--input",INPUT,"Input the uri of media file"},
+    {"-o","--output",OUTPUT,"Save the ParserDataInfo "},
+    {"-ss","--srcstream",STREAM,"Input the stream file"}
+
+};
+static void printDemoParserUsage(void)
+{
+    int num = sizeof(ArgumentMap)/sizeof(argument_t);
+    for(int i=0; i < num; i++)
+    {
+        LOG_INFO("DEBUG","%-8s %-32s   %s",ArgumentMap[i].SimpleName,
+                                ArgumentMap[i].Name,ArgumentMap[i].comment);
+
+    }
+
+}
+ARGUMENT_T GetArgument(char* name)
+{
+    int num = sizeof(ArgumentMap)/sizeof(argument_t);
+    for(int i=0; i < num;i++)
+    {
+        if((!strcmp(ArgumentMap[i].SimpleName,name))||
+            (!strcmp(ArgumentMap[i].Name,name)))
+        {
+            return ArgumentMap[i].argument;
+        }
+
+    }
+
+    return INVALID;
+
+}
+
+void parserArgument(psrDemo *ParserDemo, char* argument, char* value)
+{
+    ARGUMENT_T arg;
+    arg = GetArgument(argument);
+    if(HELP==arg)
+    {
+        printDemoParserUsage();
+        exit(-1);
+    }
+    else if(INPUT==arg)
+    {
+        sprintf(ParserDemo->pInputFile,"file://");
+        sscanf(value,"%2048s",ParserDemo->pInputFile+7);
+        LOG_INFO("DEBUG","the input file : %s",ParserDemo->pInputFile);
+    }
+    else if(OUTPUT==arg)
+    {
+        sscanf(value,"%2048s",ParserDemo->pOutputFile);
+        LOG_INFO("DEBUG","the output file : %s",ParserDemo->pOutputFile);
+
+    }
+    else if(STREAM==arg)
+    {
+        sscanf(value,"%2048s",ParserDemo->pInputStream);
+        LOG_INFO("DEBUG","the input stream file :%s",ParserDemo->pInputStream);
+    }
+    else
+        LOG_INFO("DEBUG","unknowed argument : %s",argument);
+
+}
+int InitParser(psrDemo *ParserDemo)
+{
+    int nRet,i;
+    int bForceExit = 0;
+
+    ParserDemo->stream = NULL;
+    ParserDemo->parser = NULL;
+    memset(&ParserDemo->mediaInfo, 0, sizeof(CdxMediaInfoT));
+    memset(&ParserDemo->source, 0, sizeof(CdxDataSourceT));
+
+
+    ParserDemo->source.uri=ParserDemo->pInputFile;
+    LOG_INFO(DEBUG, "SetDataSourceUrl     : source.uri is %s ", ParserDemo->source.uri);
+    nRet = CdxParserPrepare(&ParserDemo->source,0,NULL,
+                    &bForceExit,&ParserDemo->parser,&ParserDemo->stream,NULL,NULL);
+    if(nRet < 0 || ParserDemo->parser == NULL)
+    {
+        LOG_INFO(DEBUG, "open parser err nRet = %d, ParserDemo->parser = %p",nRet,ParserDemo->parser);
+        return -1;
+    }
+
+    LOG_INFO(DEBUG, "init parser success!");
+    return 0;
+
+}
+void printMediaInfo(CdxMediaInfoT MediaInfo)
+{
+    struct CdxProgramS *program;
+    program =&(MediaInfo.program[MediaInfo.programIndex]);
+    for(int i = 0; i < 1; i++)
+    {
+        LOG_INFO("DEBUG","print VideoMediaInfo    start:    ");
+        LOG_INFO("DEBUG","eCodecFormat:    %-40d",program->video[i].eCodecFormat);
+        LOG_INFO("DEBUG","nWidth:    %-40d",program->video[i].nWidth);
+        LOG_INFO("DEBUG","nHeight:    %-40d",program->video[i].nHeight);
+        LOG_INFO("DEBUG","nFrameRate:    %-40d",program->video[i].nFrameRate);
+        LOG_INFO("DEBUG","nFrameDuration:    %-40d",program->video[i].nFrameDuration);
+        LOG_INFO("DEBUG","nAspectRatio:    %-40d",program->video[i].nAspectRatio);
+        LOG_INFO("DEBUG","bIs3DStream:    %-40d",program->video[i].bIs3DStream);
+        LOG_INFO("DEBUG","nCodeSpecificDataLen:    %-40d",program->video[i].nCodecSpecificDataLen);
+        LOG_INFO("DEBUG","pCodeSpecificData:    %-40s",program->video[i].pCodecSpecificData);
+    }
+
+
+}
+
+static void saveVideoStream(CdxPacketT *packet, char *file)
+{
+
+    if(packet == NULL || file == NULL)
+        return ;
+    FILE *fp = NULL;
+    char *data = NULL;
+    int size ;
+    int nRet = 0;
+    VideoStreamDataInfo dataInfo;
+
+    memset(&dataInfo, 0, sizeof(VideoStreamDataInfo));
+    fp = fopen(file, "ab");
+    if(fp == NULL)
+    {
+        LOG_INFO("ERROR","open %s file fail",file);
+        return ;
+    }
+    dataInfo.pData = packet->buf;
+    dataInfo.nLength = packet->length;
+    dataInfo.nPts = packet->pts;
+    dataInfo.nPcr = packet->pcr;
+    dataInfo.bIsFirstPart = (!!(packet->flags & FIRST_PART));
+    dataInfo.bIsLastPart = (!!(packet->flags & LAST_PART));
+    //data = (char*)packet->buf;
+    //size = packet->buflen;
+
+
+    nRet = fwrite(dataInfo.pData,1,dataInfo.nLength,fp);
+    if(nRet == dataInfo.nLength)
+    {
+        LOG_INFO("Debug","write datainfo.data to %s file success",file);
+    }
+    else if(nRet > 0 && nRet != dataInfo.nLength)
+    {
+        LOG_INFO("Debug","the situation should not happen");
+    }
+    else
+    {
+        LOG_INFO("Error","write datainfo to %s fail",file);
+    }
+    fclose(fp);
+
+}
+
+static int md5sum(char *pInputStream, unsigned char *outmd)
+{
+    if(pInputStream == NULL ||outmd == NULL )
+    {
+        LOG_INFO("error","input is null");
+        return -1;
+    }
+
+    MD5_CTX ctx;
+    int len = 0;
+    char buffer[1024];
+    FILE *fp = NULL;
+
+    memset(buffer, 0, sizeof(buffer));
+
+    fp = fopen(pInputStream,"rb");
+    if(fp == NULL)
+    {
+        LOG_INFO("error","open %s fail",pInputStream);
+        return -1;
+    }
+
+    MD5_Init(&ctx);
+    while(0 < (len = fread(buffer,1,1024,fp)))
+    {
+        MD5_Update(&ctx, buffer, len);
+        memset(buffer, 0, sizeof(buffer));
+    }
+
+    MD5_Final(outmd, &ctx);
+    LOG_INFO("DEBUG","the file \"%s\" md5 is :",pInputStream);
+    for(unsigned int i = 0; i < strlen(outmd); i++)
+    {
+        printf("%02x",outmd[i]);
+    }
+
+    fclose(fp);
+    return 0;
+
+}
+
+#if TEST_MD5CMP
+static int md5cmp(char *srcFile, char *dstFile)
+{
+    char mdleft[20];
+    char mdrigth[20];
+
+    if(srcFile == NULL )
+    {
+        LOG_INFO("DEBUG","the file %s is null", srcFile);
+        return -1;
+    }
+
+    if(dstFile == NULL)
+    {
+        LOG_INFO("DEBUG","the file %s is null", dstFile);
+        return -1;
+    }
+
+    memset(mdleft, 0, sizeof(mdleft));
+    memset(mdrigth, 0, sizeof(mdrigth));
+
+    md5sum(srcFile, mdleft);
+    md5sum(dstFile, mdrigth);
+
+    if(0 == strcmp(mdleft, mdrigth))
+    {
+        LOG_INFO("DEBUG","the file %s is same to the file %s",srcFile,dstFile);
+        return 0;
+
+    }
+    else
+    {
+        LOG_INFO("ERROR","the file %s is different from the file %s",srcFile,dstFile);
+        return -1;
+    }
+
+
+}
+#endif
+
+int main(int argc, char** argv)
+{
+    psrDemo ParserDemo;
+    char *pInputFile = NULL;
+    char *pOutputFile = NULL;
+    char *buf = NULL;// use to store the prefetch data
+    int nRet = 0;
+    char *pInputStream = NULL;
+    int nVideoStreamCount = 0;
+    int nAudioStreamCount = 0;
+    int nSubtileStreamCount = 0;
+
+    pInputFile = calloc(2*1024, 1);
+    if(NULL == pInputFile)
+    {
+        LOG_INFO("ERROR","input file calloc memory fail");
+        return 0;
+    }
+
+    pOutputFile = calloc(2*1024, 1);
+    if(NULL == pOutputFile)
+    {
+        LOG_INFO("ERROR","input file calloc memory fail");
+        free(pInputFile);
+        return 0;
+    }
+
+    pInputStream = calloc(2*1024, 1);
+    if(NULL == pInputStream)
+    {
+        LOG_INFO("ERROR","input stream file calloc memory fail");
+        free(pInputFile);
+        free(pOutputFile);
+        return 0;
+    }
+
+    memset(&ParserDemo, 0, sizeof(ParserDemo));
+    ParserDemo.pInputFile = pInputFile;
+    ParserDemo.pOutputFile = pOutputFile;
+    ParserDemo.pInputStream = pInputStream;
+
+    if(argc<2)
+    {
+        LOG_INFO("ERROR","need more arguement");
+        printDemoParserUsage();
+        exit(-1);
+    }
+    else
+    {
+        for(int i = 1; i < (int)argc; i+=2)
+        {
+            parserArgument(&ParserDemo, argv[i], argv[i+1]);
+        }
+    }
+
+    logd("the input file is %s",ParserDemo.pInputFile);
+
+    InitParser(&ParserDemo);
+    if((buf = (char*)malloc(1*1024*1024*sizeof(char))) == NULL)
+    {
+        LOG_INFO("ERROR","malloc buf unsuccessful");
+        exit(1);
+    }
+
+    nRet = CdxParserGetMediaInfo(ParserDemo.parser,&(ParserDemo.mediaInfo));
+    if(nRet !=0)
+    {
+        LOG_INFO("ERROR","get Media Info err!");
+        return -1;
+    }
+    printMediaInfo(ParserDemo.mediaInfo);
+
+    CdxPacketT packet;
+    memset(&packet, 0, sizeof(CdxPacketT));
+
+    while(0 == CdxParserPrefetch(ParserDemo.parser,&packet)) //read next data
+    {
+        packet.buflen = packet.length;
+        packet.buf = buf;
+        if(0 == CdxParserRead(ParserDemo.parser,&packet))
+        {
+#if TEST_PARER_TYPE
+             LOG_INFO("DEBUG","the packet.type is %d",packet.type);
+#endif
+            //LOG_INFO("DEBUG","packet.flags is %d, and flags&MINOR_STREAM is %d",packet.flags,(packet.flags&MINOR_STREAM));
+
+            if(packet.type == CDX_MEDIA_VIDEO)
+            {
+                    saveVideoStream(&packet,ParserDemo.pOutputFile);
+                    nVideoStreamCount++;
+            }
+#if TEST_STREAM_OTHER
+            else if(packet.type == CDX_MEDIA_AUDIO)
+            {
+                    //
+                    nAudioStreamCount++;
+            }
+            else if(packet.type == CDX_MEDIA_SUBTITLE)
+            {
+                    //
+                    nSubtileStreamCount++;
+            }
+#endif
+
+        }
+    }
+
+#if TEST_STREAM_OTHER
+    LOG_INFO("debug","the VideoStreamCount:%d",nVideoStreamCount);
+    LOG_INFO("debug","the AudioStreamCount:%d",nAudioStreamCount);
+    LOG_INFO("debug","the SubtileStreamCount:%d",nSubtileStreamCount);
+    LOG_INFO("DEBUG","packet type Video:0 ,Audio:1 ,Subtitle:2");
+#endif
+    CdxParserClose(ParserDemo.parser);
+#if TEST_MD5CMP
+    md5cmp(ParserDemo.pOutputFile, ParserDemo.pInputStream);
+#endif
+
+#if TEST_STREAM_VIDEO_READ
+
+    char data[11] = {'\0'};
+    FILE *fp2;
+    fp2 = fopen(pOutputFile,"rb");
+    if(fp2 == NULL)
+        LOG_INFO("ERROR","Open fail");
+    if(fread(data,1,10,fp2) !=10)
+        LOG_INFO("error","read fail");
+    LOG_INFO("DEBUG","the data is %02x",data);
+    fclose(fp2);
+
+#endif
+
+
+    free(buf);
+    free(pInputFile);
+    free(pOutputFile);
+    free(pInputStream);
+    return 0;
+
+
+}

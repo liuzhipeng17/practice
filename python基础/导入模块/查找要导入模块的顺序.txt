@@ -1,0 +1,15 @@
+# 查找模块顺序：
+    内存中查找（sys.modules查看）-->内建模块（buit-in)--->找sys.path路径下的模块文件
+
+    # 即使你创建了个模块和内建模块同名的py（比如sys)
+    # import sys导入的还是内建模块的sys
+    # 内建模块sys. 执行文件test.py启动解析器（test.py包含import sys)，内建模块sys加载到内存
+
+# 跨目录导入模块(验证sys.path)
+    test/dir1/spam.py
+    test/dir2/test.py
+    从test.py要导入spam.py，只能从sys.path做修改（唯一方法，前提test不是包，dir1,dir2不是包）
+    在test.py里面添加sys.path.append('test/dir2'), 会在sys.path列表的目录查找是否有spam模块
+
+# import spam.py 会生成spam.pyc缓存文件，是一些字节码
+# 可以将多种py文件压缩成zip，然后sys.path.append(zip的路径)sys.path.append("test/dir1") # 注意windows路径

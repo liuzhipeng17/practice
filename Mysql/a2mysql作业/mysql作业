@@ -1,0 +1,80 @@
+-- select * from score where score.num > 60
+# 查找平均成绩大于60的学生的id和平均成绩
+-- SELECT student_id, avg( num ) AS avg_score FROM score GROUP BY student_id HAVING avg_score > 60;
+# 查找平均成绩大于60的学生的id,姓名，和平均成绩（连表）
+-- SELECT
+-- 	B.student_id,
+-- 	student.sname,
+-- 	B.avg_score
+-- FROM
+-- ( SELECT student_id, avg( num ) AS avg_score FROM score GROUP BY student_id HAVING avg_score > 60 ) AS B
+-- 	LEFT JOIN student ON student.sid = B.student_id;
+# 查询没有学过李平老师课学生的姓名，id
+
+	# 碰到Not,一定要在最顶一层进行Not, 在学生表里面not in (学过老师课程学生的id,还有进行分组过滤掉重复的)
+	# 先查到李平老师教过哪些课；
+
+-- select student.sid,student.sname from student where student.sid not in (
+-- 	select student_id from score
+-- 	where score.course_id in (select cid from course left join teacher on course.teacher_id=teacher.tid where teacher.tname='李平老师')
+-- 	group by student_id);
+
+
+# 查找学过001课程和002课程的学生id,姓名
+-- select * from score where course_id in (1,2) # 找到学过1或者2的student
+-- select student_id from score where course_id in (1,2) group by student_id having count(student_id) > 1 # 找到同时学过1和2学生的id
+
+-- select student.sid, student.sname from student where student.sid in (select student_id from score where course_id in (1,2) group by student_id having count(student_id) > 1)
+
+# 查找学过李平老师所有课的学生id,姓名
+-- select * from course left join teacher on teacher.tid = course.teacher_id where teacher.tname='李平老师';
+
+-- select student.sname, student.sid from student where sid in
+-- (select student_id from score where course_id in (select cid from course left join teacher on teacher.tid = course.teacher_id where teacher.tname='李平老师') group by  student_id having count(student_id) = (select count(1) from course left join teacher on teacher.tid = course.teacher_id where teacher.tname='李平老师'))
+
+
+# 计算每科成绩和及格率
+-- # 先增加两列，一列显示是否及格，另外一列做辅助作用
+-- select * from (select course_id, num, case when num < 60 then 0 else 1 end as pass, 1 from score) as B ;
+
+# 然后进行group by,按course_di进行分组，pass进行sum聚合，1进行聚合
+
+-- select course_id, avg(num), sum(case when num < 60 then 0 else 1 end), sum(1) from score group by score.course_id；
+
+
+-- select course_id, avg(num), sum(case when num < 60 then 0 else 1 end) as pass, sum(1) as zong, sum(case when num < 60 then 0 else 1 end)/sum(1) as jgelv from score group by score.course_id;
+-- pass, zong在select还不能用
+
+
+# 计算课程平均分从高到底显示，显示任课老师
+-- -- select * from teacher;
+-- select score.course_id, course.cname, teacher.tname, avg(if(isnull(score.num), 0, score.num)) as average from score
+-- 		left join course on score.course_id=course.cid
+-- 		left join teacher on course.teacher_id=teacher.tid
+-- 		group by score.course_id
+-- 		order by average desc;
+		# selct where .. group by已经得到新表了，所以order by 可以用新表的average了；但是在创建之前，是不可以用的
+		# 此时可以用average,但是在select里面不能用average
+
+# 找出每科成绩前两名同学，课程，成绩，以及
+	# 新增加两列（每科成绩的第一分数，第二分数)(每科要用到双重循环）
+
+	# 如果内循环写死，查询course_id =1的第一分数和第二分数
+-- 		select
+-- 		(select num from score where score.course_id = 1 order by num limit 0,1) as frist_s,
+-- 		(select num from score where score.course_id = 1 order by num limit 1,1) as second_s
+-- 		from score  #这里不能用score.frist_s因为frist_s是新表（结果表）的列，不是score的列
+
+-- 	select * from
+-- 		(select
+-- 				A.student_id,
+-- 				A.course_id,
+-- 				A.num,
+-- 				(select B.num from score as B where B.course_id = A.course_id order by B.num desc limit 0,1) as frist_s,
+-- 				(select B.num from score as B where B.course_id = A.course_id order by B.num desc limit 1,1) as second_s
+-- 		from score  as A)
+--
+-- 		as C  where C.num >= C.second_s
+--
+
+

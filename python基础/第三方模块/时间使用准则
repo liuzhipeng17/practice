@@ -1,0 +1,13 @@
+# date 和time分为两种：native(原始时间), aware(有意识时间0)
+# 记住以下三个原则：
+1 不要使用time模块在不同时区进行转换（time模块只适合在宿主计算机操作系统时区和utc时区转换)
+
+2 在不同时区进行转换和时间操作，请用pytz和内置模块datetime
+
+3 开发者应该先把时间表示成utc格式，然后对其进行执行各种操作，最后再把它转成本地时间
+
+# datetime中主要的类：
+date--datetime
+time
+tzinfo--timezone(时区类型）
+timedelta

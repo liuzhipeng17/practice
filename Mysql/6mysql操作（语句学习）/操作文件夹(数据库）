@@ -1,0 +1,36 @@
+
+# 数据库的名字对大小写敏感的，数据库语句关键字对大小写不敏感
+select 和SELECT是一样的，但推荐关键字用大写，其余用小写
+    create database db1 和create database DB1是创建了两个数据库
+
+#1 查看当前服务器有多少个数据库
+    show tables
+
+#2 切换目录use(切换数据库）前提是用于这个目录的权限
+    use databasename
+
+#3 赋予用户数据库权限
+    GRANT ALL privileges ON menagerie.* TO 'your_mysql_name'@'your_client_host';
+
+#4查看有哪些文件夹
+    show database;
+
+#5创建文件夹
+    create database 'db1' default charset utf8;
+
+    CREATE DATABASE IF NOT EXISTS 'django_stu' DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+#6删除文件夹
+    drop database db1
+
+#7 查看当前数据库
+    select database()
+
+#8 连接数据库的时候，就确定进入那个数据库
+    mysql -u root -p db1;
+
+#9 查看创建数据库的语句
+    show create database db1;
+
+
+
+

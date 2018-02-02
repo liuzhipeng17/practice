@@ -1,0 +1,13 @@
+在真正运行sql之前，应该使用执行计划来预估一下sql的执行时间。
+这个执行时间作为一个参考值，有助于你知道哪些sql需要优化的。
+
+执行计划; 让mysql预估sql的执行时间；
+explain select * from user \G;
+-- explain sql ;是预估sql的执行时间
+
+http://www.cnblogs.com/wupeiqi/p/5716963.html
+
+主要看type(第四个ALL，ALL代表全表扫描）
+
+
+1	SIMPLE	student		ALL					16	100

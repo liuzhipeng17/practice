@@ -1,0 +1,46 @@
+事物： 把整个行为看成原子性操作；中间一旦失败，会
+回滚到事物开始的地方
+
+#1 存储过程使用事物的语法：(伪代码）
+
+    delimiter //
+        drop procedure if exists `p2`;  -- 分号不能少
+        create procedure p2(out status_code tinyint)
+            begin
+                1 声明如果出现异常，执行括号代码{set status_code = 1; rollback}
+
+                2 开始事物
+                    --- 由秦兵账户-100
+                    --- 方少伟账户+90
+                    --- 张根账户+10
+                    commit
+
+                  结束事物
+                  set status_code = 2
+            end
+        //
+    delimiter ;
+
+#2 存储过程设置事物代码
+
+     delimiter //
+        drop procedure if exists `p4`;  -- 分号不能少
+        create procedure p4(out status_code tinyint)
+            begin
+                declare exit handler for sqlexception -- 声明发生异常，会执行下面begin end代码块
+                begin
+                    -- error
+                    set status_code = 404;
+                    rollback;
+                end; -- 这个分号不能少
+
+                start tranction;
+                    delete from tb1;
+                    insert into tb2(name) vaules('lzp');
+                commit;
+                -- success
+                set status_code = 200;
+            end//
+        delimiter ;
+#3 程序员执行存储过程，根据status_code来判断存储过程是否执行成功
+

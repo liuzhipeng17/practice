@@ -1,0 +1,37 @@
+多对多： 新建一个表来管理两个表之间多对多的关系
+需求：一个用户可以使用多台主机，一个主机可以供多个用户使用；像这种情况
+就是在创建一个新表来管理这种关系
+
+用户表				主机表
+id	name			id	主机名
+1	alex1			1	C1
+2	alex2			2	C2
+3	alex3			3	C3
+4	alex4			4	C4
+5	alex5
+6	alex6
+7	alex7
+
+
+		用户主机关系表（是否要联合索引，根据业务决定）
+		id	user_id	host_id
+		1	1	    1
+		2	1	    2
+		3	1	    3
+		4	1	    4
+		5	2	    2
+		6	3	    1
+		7	3	    4
+		8	4	    1
+
+# 最好先建第三张表（主要是为了快速查询，一个用户拥有多少台主机，一个主机哪些用户可以使用）
+create table user2host(
+    id int auto_increment primary key,
+    user_id int not null,
+    host_id int not null,
+    constraint fk_user_re foreign key (user_id) references user(id),
+    constraint fk_host_re foreign key (host_id) references host(id),
+    unique uq_user_host (user_id,host_id)
+)engine=innodb default charset=utf8;
+
+# 忘记constraint fk_user_re前面这里

@@ -1,0 +1,91 @@
+
+官网教程：https://docs.sqlalchemy.org/en/latest/intro.html
+
+#1 安装
+    pip3 install SQLAlchemy
+
+#2 声明一个映射
+    在使用ORM时，配置过程
+    1)首先描述我们要处理的数据库表，
+    2)然后定义我们自己的类，这些类将映射到这些表。
+
+    在SQLAlchemy中，这两个任务通常是一起执行的，使用一个称为declarative的系统，
+    它允许我们创建类，用来描述被映射到实际数据库中的表。
+
+    from sqlalchemy.ext.declarative import declarative_base
+
+    Base = declarative_base()
+
+#3 创建映射类User
+
+    from sqlalchemy import Column, Integer, String
+    class User(Base):
+         __tablename__ = 'users' # 必须要的
+
+         id = Column(Integer, primary_key=True) # 必须要的
+         name = Column(String)
+         fullname = Column(String)
+         password = Column(String)
+#4 连接（这里并不是指连接数据库）
+   连接不同数据库，使用不同的DBAPI,官网教程：
+        https://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls
+
+   在这里,sqlalchemy通过配置，采用pymysql连接MySQL
+        connect_str ='mysql+pymysql://<username>:<password>@<host>/<dbname>[?<options>]'
+
+   连接语法：
+        from sqlalchemy import create_engine
+        engine = create_engine(connect_str)
+
+   第一位置参数:
+        格式：dialect[+driver]://user:password@host/dbname[?key=value..],
+        dialect: mysql，oracle,postgresql
+        driver(DBAPI):pymysql,mysql等
+
+   理解create_engine:
+        create_engine返回一个engine对象，create_engine是一种核心接口，通过配置一种数据库以及DBAPI
+        从而得到一个engine对象。
+
+        engine此时并没有连接DBAPI，只有在engine.connect()或者调用engine.execute()
+        才会从pool提交connect DBAPI请求；
+
+
+    可选参数：
+        case_sensitive = True;
+            区分列名大小写，默认是True;如果设置为False，不区分列名大小写
+
+#5 创建模式（创建所有表）
+     Base.metadata.create_all(engine)
+
+#6 创建一个回话session（ORM操作数据库行就是通过session）
+    from sqlalchemy.orm import sessionmaker
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+#7 插入一行 session.add()
+    ed_user = User(name='ed', fullname='Ed Jones', password='edspassword')
+    session.add(ed_user)
+    session.commit()
+
+#8 一次插入多行session.add_all(lists)
+     session.add_all(
+        [
+            User(name='wendy', fullname='Wendy Williams', password='foobar'),
+            User(name='mary', fullname='Mary Contrary', password='xxg527'),
+            User(name='fred', fullname='Fred Flinstone', password='blah')
+        ]
+     )
+
+#9 查询（query)
+    1 session.query(类名).all() -- 查询所有
+
+        user_type_lists = session.query(UserType).all()
+        # 返回一个列表，列表元素为UserType对象
+        for row in user_type_lists:
+            print(row.id, row.title)
+
+    2 刷选filter_by
+
+        our_user = session.query(User).filter_by(name='ed')
+        -- filter_by 等效where;
+

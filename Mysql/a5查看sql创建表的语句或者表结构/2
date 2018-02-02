@@ -1,0 +1,2 @@
+show create table user; -- 查看创建表的sql语句
+desc user; -- 查看表的结构

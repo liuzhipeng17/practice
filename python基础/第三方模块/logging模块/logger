@@ -1,0 +1,5 @@
+DEBUG     2017-09-03 15:03:53 root           [16] debug message
+INFO      2017-09-03 15:03:53 root           [17] info message
+WARNING   2017-09-03 15:03:53 root           [18] warning message
+ERROR     2017-09-03 15:03:53 root           [19] error message
+CRITICAL  2017-09-03 15:03:53 root           [20] critial message

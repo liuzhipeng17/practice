@@ -1,0 +1,39 @@
+# linux安装mysql服务后，需要安装python操作mysql的第三方库
+	Did you install mysqlclient?（python2,3都支持，之前的python-mysql不支持pytHon3）
+
+	-- pip install mysqlclient
+
+
+# --需要给navicat/django远程连接mysql
+
+	-- django.db.utils.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+		-- 这个问题一般是密码或者用户名错了
+
+
+	-- 授权
+		-- 创建用户
+	   	create user 'lzp'@'%' identified by '123456';
+		-- 给这个系统用户授权
+	  	grant all privileges on *.* to 'lzp'@'%' identified by '123456' with grant option
+	  	flush privileges
+
+	-- 修改django.settings.py
+	DATABASES = {
+    		'default': {
+        		'ENGINE': 'django.db.backends.mysql',
+        		'NAME': 'mxshop',
+       			'USER': 'test',
+        	'PASSWORD': '123456',
+        	'HOST': '127.0.0.1',
+        	'PORT': '3306',
+        	# 'OPTIONS': {'init_command': 'SET storage_engine=INNODB;'},   #数据库mysql版本不是5.7要改成default_storage_engine=INNODB
+    		}
+	}
+
+
+		
+# 安装Python第三方包出错时，请访问以下网址
+	https://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+
+# pillow  图片处理第三方包

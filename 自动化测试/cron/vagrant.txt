@@ -1,0 +1,11 @@
+# vagrant 
+	虚拟机管理工具
+	
+# 虚拟机
+	virtualbox
+	vmmare
+	
+# 开发环境 相对的为线上环境
+
+真正的开发环境是相当复杂的，数据库、缓存服务器、反向代理服务器、Load Balancer、搜索引擎服务器(例如Sunspot或Elastic Search)、网站服务器、实时推送服务器。
+数据库往往还不止一种，为匹配各种架构一般都会起Mysql或Postgres，根据你的业务需求可能还需要添入Nosql或管理时间序列等各类数据库。

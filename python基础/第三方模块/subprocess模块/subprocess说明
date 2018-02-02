@@ -1,0 +1,39 @@
+
+
+Popen构造函数
+    subprocess.Popen(args, bufsize=-1, executable=None, stdin=None,
+    stdout=None, stderr=None, preexec_fn=None, close_fds=True,
+    shell=False, cwd=None, env=None, universal_newlines=False,
+    startupinfo=None, creationflags=0, restore_signals=True,
+    start_new_session=False, pass_fds=(), *, encoding=None, errors=None)
+
+
+常用的选项：
+    args
+    要求args是字符串，或者列表，元组，推荐使用列表或元组的形式。因为列表允许模块处理任何需要的
+    转义和引用的参数。如果是字符串，则shell必须为True
+    如果是列表或者元组，第一个元素是可执行命令，后面的为参数；如果是字符串，shell解析在不同平台是不同
+
+    stdin,stderr,stdout
+    合法值可以是：PIPE, DEVNULL, 打开的文件描述符（整数），一个文件的现有对象，None
+    PIPE:如果是管道，则可以用read()进行读取；如stdout=subprocess.PIPE，则可以
+    p.stdout.read()
+    但建议使用communicate(),而不是.stdin.write(), .stdout.read()或.stderr.read()以避免死锁，
+    因为其他的OS管道缓冲区填满并阻塞了子进程。
+
+    shell=True
+    如果shell设置为True,args建议为字符串传递，而不是list或者元组（当然也可以为list或tuple)
+    在linux中，默认的shell为 /bin/sh;如果args是字符串，会按照/bin/sh执行args命令.
+    如果args是列表，则会解析args为:['/bin/sh','-c',args[0],args[1]..]
+    在windows中，shell为COMSPEC环境变量指定的shell。在windows上通常不需要指定shell=True,
+    只有在执行的命令是内建在shell的命令如(dir, copy，ipconfig等）
+
+    注意：与其他一些popen函数不同，这个实现永远不会隐式地调用系统shell。
+    这意味着所有字符，包括shell元字符，都可以安全地传递给子进程。
+    如果shell是通过shell = True显式调用的，
+    则应用程序的责任是确保适当引用所有空白和元字符以避免shell注入漏洞。
+    当使用shell = True时，
+    可以使用shlex.quote()函数来正确地从字符串中逃离空格和shell元字符，
+    这些字符串将用于构建shell命令。
+
+subprocess 支持with上下文管理器（python3.2以上）

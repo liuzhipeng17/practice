@@ -1,0 +1,53 @@
+with open(filename, 'a+') as f:
+   f.seek(0)
+   model.input(f.read())
+   model.compute()
+   f.seek(0)
+   f.truncate()
+   f.write(model.output())
+
+
+open(file, mode='r', buffering=None, encoding=None, errors=None, newline=None, closefd=True):
+
+mode:默认是r模式，读模式；所有模式为
+    'r'       open for reading (default)（读模式，默认）
+    'w'       open for writing, truncating the file first（写，如果文件存在清空内容）
+    'x'       create a new file and open it for writing（创建一个文件，并写模式）
+    'a'       open for writing, appending to the end of the file if it exists（追加模式）
+    'b'       binary mode（二进制模式）
+    't'       text mode (default)（文本模式，默认）
+    '+'       open a disk file for updating (reading and writing)（读写模式）
+    'U'       universal newline mode (deprecated)  --python以及不存在
+
+    r w x
+
+不同模式打开文件的完全列表：注意文件指针的位置
+
+r	以只读方式打开文件。文件的指针将会放在文件的开头。这是默认模式。
+rb	以二进制格式打开一个文件用于只读。文件指针将会放在文件的开头。这是默认模式。
+r+	打开一个文件用于读写。文件指针将会放在文件的开头。
+rb+	以二进制格式打开一个文件用于读写。文件指针将会放在文件的开头。
+
+w	打开一个文件只用于写入。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。
+wb	以二进制格式打开一个文件只用于写入。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。
+w+	打开一个文件用于读写。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。
+wb+	以二进制格式打开一个文件用于读写。如果该文件已存在则将其覆盖。如果该文件不存在，创建新文件。
+
+a	打开一个文件用于追加。如果该文件已存在，文件指针将会放在文件的结尾。也就是说，新的内容将会被写入到已有内容之后。如果该文件不存在，创建新文件进行写入。
+ab	以二进制格式打开一个文件用于追加。如果该文件已存在，文件指针将会放在文件的结尾。也就是说，新的内容将会被写入到已有内容之后。如果该文件不存在，创建新文件进行写入。
+a+	打开一个文件用于读写。如果该文件已存在，文件指针将会放在文件的结尾。文件打开时会是追加模式。如果该文件不存在，创建新文件用于读写。
+ab+	以二进制格式打开一个文件用于追加。如果该文件已存在，文件指针将会放在文件的结尾。如果该文件不存在，创建新文件用于读写。
+
+
+文件定位方法：
+    f.tell()
+    f.seek()
+    f.truncate()
+
+tell()方法告诉你文件内的当前位置；换句话说，下一次的读写会发生在文件开头这么多字节之后。
+
+seek（offset [,from]）方法改变当前文件的位置。
+Offset变量表示要移动的字节数。From变量指定开始移动字节的参考位置。
+如果from设为0，将文件的开头作为移动字节的参考位置。默认是0
+如果from设为1，则使用当前的位置作为参考位置。
+如果from设为2，那么该文件的末尾将作为参考位置。

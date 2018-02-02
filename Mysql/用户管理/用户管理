@@ -1,0 +1,31 @@
+#1 创建用户
+    create user 'lzp'@'localhost' identified by '123';
+    create user 'lzp'@'%' identified by '123';
+
+#2 用户授权
+    grant all privileges on db1.* to 'lzp'@'localhost' with grant option;
+
+    mysql> GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP
+    ->     ON expenses.*
+    ->     TO 'custom'@'host47.example.com';
+
+#3 删除用户
+    drop user 'lzp'@'localhost';
+
+#4 修改密码
+    用户存储在mysql库的user表里面，密码是按其hash值存储的；
+    root用户登录后修改:
+        alter user 'lzp'@'localhost' identified by '1234';
+
+    lzp用户登录后修改：
+        alter user USER() identified by '1234';
+
+    命令行修改：
+        mysqladmin -u lzp -h 127.0.0.1 password '1234';
+
+        127.0.0.1 是客户端ip地址；
+ #5 用户登录
+        shell> mysql --user=finley --password=password db_name
+        shell> mysql -u finley -ppassword db_name
+
+       -p后面紧跟着密码，不要用空格隔开

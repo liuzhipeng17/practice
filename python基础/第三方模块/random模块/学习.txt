@@ -1,0 +1,16 @@
+# random.random(）产生0-1的随机实数，不包含0和1
+>>> random.random()  (0,1)
+0.08680731975414047
+# random.randint(start,end) 产生随机整数，范围[start,end]
+>>> random.randint(1,5)  [1,5]
+2
+>>>random.choice([1,25,6]) # 从1,25,6随机取一个
+
+
+# random.shuffle 打乱次序
+>>> item = [1, 4, 5,7]
+>>> random.shuffle(itme)
+>>> random.shuffle(item)
+>>> item
+[4, 7, 5, 1]
+>>>

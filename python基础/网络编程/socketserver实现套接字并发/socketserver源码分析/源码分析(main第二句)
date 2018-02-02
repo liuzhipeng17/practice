@@ -1,0 +1,59 @@
+obj.serve_forever()
+总结如下：
+    obj.serve_forever() 等效执行 self.socket.accept()，
+    request, client_address = self.socket.accept()
+    request == conn, client_address == addr
+
+
+
+# 详细如下：
+
+# 查找obj属性server_forever的顺序ThreadingTCPServer， ThreadingMixIn, TCPServer， BaseServer
+
+#在BaseServer找到 serve_forever(self, poll_interval=0.5):
+
+# 在里面主要执行self._handle_request_noblock()
+# BaseServer _handle_request_noblock()主要代码为：
+
+            request, client_address = self.get_request()
+            self.process_request(request, client_address)
+
+# 查找get_request()属性：在TCPServer找到属性
+    def get_request(self):
+        return self.socket.accept()
+
+# self.process_request(request, client_address)从头开始找在ThreadingMixIn
+# 创建多线程，并且创建线程的入口函数为：self.process_request_thread
+    def process_request(self, request, client_address):
+        """Start a new thread to process the request."""
+        t = threading.Thread(target = self.process_request_thread,
+                             args = (request, client_address))
+        t.daemon = self.daemon_threads
+        t.start()
+
+# 线程入口函数self.process_request_thread 在ThreadingMixIn找到，
+            try:
+                self.finish_request(request, client_address)
+                self.shutdown_request(request)
+            except:
+                self.handle_error(request, client_address)
+                self.shutdown_request(request)
+
+# 主要执行self.finish_request(request, client_address)
+     self.finish_request对RequestHandlerClass进行了实例化
+     self.RequestHandlerClass(request, client_address, self)
+     因为self.RequestHandlerClass = TcpServer(自己定义的类）
+        # 会调用相应的__init__方法
+        # 会执行BaseRequestHandler的__init__
+        #
+        #
+        def __init__(self, request, client_address, server):
+        self.request = request
+        self.client_address = client_address
+        self.server = server
+        self.setup()
+        try:
+            self.handle()
+        finally:
+            self.finish()
+

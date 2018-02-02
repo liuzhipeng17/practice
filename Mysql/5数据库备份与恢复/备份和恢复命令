@@ -1,0 +1,54 @@
+
+#1 可以通过navicat进行备份
+    # 右击数据库--> dump sql file -> 选择结构和数据（ 或者仅仅选择结构）
+
+#2 在命令行(cmd）进行备份（后面不要加分号）
+    官网教程https://dev.mysql.com/doc/refman/5.7/en/using-mysqldump
+
+    #a 备份单个数据库(备份结构和数据，不备份创建库语句)
+        mysqldump -u root -p  db1 > db1.sql
+
+    #b 备份单个数据库(仅备份结构-d，不备份创建库语句)
+        mysqldump -u root -p  -d db1 > db1.sql
+
+    #c 备份所有数据库(包含创建库，表语句)
+        mysqldump -u root -p --all-databases > dump.sql;
+
+    #d 备份多个数据库(db1,db2)
+        mysqldump -u root -p --databases db1 db2 > dump.sql;
+        必须添加--databases选项，否则会认为备份db1下的db2表
+
+    #e 备份表
+        不是数据库,备份了test数据库的t1,t3,t7表
+        mysqldump test t1 t3 t7 >dump.sql;
+
+    #f 备份单个数据库（不包含创建库语句），将表的创建和表的数据分开
+        mysqldump --no-data test > dump.sql  -- 只要表的定义
+        mysqldump --no-create-info test > dump.sql --只要表的数据
+
+#3 备份单个数据库的另外方法
+    #1 mysqldump -u root -p --databases tb1 > dump.sql;(不推荐这种方法）
+
+    #2 mysqldump -u root -p tb1 >dump.sql;（推荐这种方法，就是#a方法）
+
+    #1 和#2 区别在于： #2不包含创建库语句，所以在导入之前要先创建库
+
+    #2方法是如何恢复数据的
+        mysqldump db1 > dump.sql
+        mysqladmin create db2
+        mysql db2 < dump.sql
+
+
+
+
+#4 恢复数据库
+    create database db5; # 要先创建数据库
+    mysql -u root -p db5 < db1.sql（这是针对#a和#b方法）
+
+
+#5 恢复数据库
+    mysql -u root -p < dump.sql;
+    在windows下，用引号引起来，因为< 有特殊意义；
+
+
+

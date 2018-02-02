@@ -1,0 +1,43 @@
+# 频繁查找的列，作为索引（索引会使得插入修改删除变慢，索引不是越多越好）
+    1 创建索引
+    2 命中索引
+http://www.cnblogs.com/wupeiqi/p/5716963.html
+无法命中索引的情况
+    #1 like '%xx' -- 数据量大的时候，避免使用like；
+        select * from student where email like '%a'; -- 慢
+
+        而是借助第三方工具来查询（会将词，以及词出现列的id统计在本地文件c中或者内存中）
+        词       id组
+        我们     1,2,5
+        然后select * from c where id in (1,2,5)
+    #2 函数(不仅仅是reverse函数，是所有函数）
+        select * from student where reverse(email) = 'lzp'; -- email是索引列，慢
+        -- 在程序里面先做函数处理，然后
+
+    #3 or
+        select * from student where id=1 or name = 'lzp'; -- name不是索引列， 慢
+        select * from student where id=1 or name ='lzp' and email='ll'; -- 命中索引， name不是索引
+
+    #4 类型不一致(主键除外）
+        -- 不会报错，但会慢，没有命中索引
+        select * from student where email = 999; -- 慢
+
+    #5 != (主键除外）
+
+        select * from student where email != '999'; -- 慢
+
+    #6  >(主键，数字索引列除外）
+        select * from student where email > '999'
+
+    #7 order by（order by 主键除外）
+        映射列必须是索引列
+        要想命中索引，必须这样：select email from student order by email desc;
+        不能select * from student order by email desc;
+        或者select name from student order by emil desc;
+
+    #8 组合索引（最左前缀）
+        如果组合索引为(name,email)
+        name命中索引
+        name and email命中索引
+        email 没命中索引
+

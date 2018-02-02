@@ -1,0 +1,8 @@
+数据类型
+    int
+    tinyint unsigned[signed]
+    bigint
+
+    float
+    double
+    decimal(),[]

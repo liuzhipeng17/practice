@@ -1,0 +1,12 @@
+# mysqld --initialize 或者mysqld --initalize-insecure会按以下步骤操作
+
+# 1检查data目录是否存在，不存在则创建；如果存在会报错（此时，手动删除或者重命名）
+
+# 2在data目录，创建系统数据库以及相应表（grant表，server-side帮助表，时区表，
+
+# 3服务器初始化系统表空间和管理InnoDB表所需的相关数据结构。
+
+# 4创建超级管理员'root'@'localhost'以及一些保留用户，这些保留用户不能被客户使用。建议给
+root设置密码(assign it a password)
+
+# 5

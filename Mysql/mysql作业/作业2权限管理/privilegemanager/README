@@ -1,0 +1,11 @@
+#1 开始之前先要导入数据库， 数据库备份文件目录; privilegemanager/db/lzpdb.sql
+
+#2 用户密码采用base64加密，虽然不安全但为了能够解密（找回密码）暂时用这种不够安全的加密方法
+
+#3 程序执行：
+    privilegemanager/bin/main.py可执行文件
+
+#4 程序流程图：
+    https://www.processon.com/diagraming/59be75b8e4b00e5d38db1d4f
+
+# alex用户为超级管理员，密码为123; role_id =1的用户均为超级管理员（暂时不限制管理员的个数）

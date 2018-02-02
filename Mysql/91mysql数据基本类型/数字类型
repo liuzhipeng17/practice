@@ -1,0 +1,43 @@
+官网教程：
+https://dev.mysql.com/doc/refman/5.7/en/data-types.html
+
+decimal:按字符串存储数字，所以十分准确（推荐存储小数，用decimal)
+
+num=decimal(10,3) 总共10（.和负号-不算在10里面),3位小数点
+
+数字类型
+    BIT
+    tinyint [unsigned] [zerofill]
+    # A very small integer. The signed range is -128 to 127. The unsigned range is 0 to 255.
+    boolean
+    smallint [unsigned] [zerofill]
+    # A small integer. The signed range is -32768 to 32767. The unsigned range is 0 to 65535.
+    mediumint
+    #A medium-sized integer. The signed range is -8388608 to 8388607. The unsigned range is 0 to 16777215.
+    int
+    #A normal-size integer. The signed range is -2147483648 to 2147483647. The unsigned range is 0 to 4294967295.
+
+
+    DECIMAL[(M[,D])] [UNSIGNED] [ZEROFILL]
+    #精确定点数，M是总位数（不包含.和-），D是小数点后面的位数； M,D均可省略不写，M默认是10，D默认是0
+    #
+
+字符类型：
+    char
+    varchar
+
+时间类型：定义为 type_name(fsp)
+    type_name的值为：TIME, DATETIME, TIMESTAMP
+    fsp的值为：0-6，默认是6，表示秒后面小数为数，
+    比如'9999-12-31 23:59:59.999999'. 59后面的小数位数只能最多是6位
+    datetime
+    时间戳（timestamp）
+
+# 补充两种
+    枚举enum（约束值只能从给定的范围中选择一个） department ENUM('it','hr')
+    那么department列的值只能是it或者hr
+    集合set(约束值只能从给定的范围随意组合的一个）
+    col set('r','w','l')
+    那么col的值只能是'r','w','l'组合中的一个
+
+    但对于范围可以被修改的，不用枚举。 应该在创建一个表，比如department要添加一个部门，

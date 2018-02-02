@@ -1,0 +1,8 @@
+# __name__变量，
+## 当spam.py当做普通脚本(python **.py,或者pycharm右键run)执行的时候，__name__ = __main__
+## 当把spam.py当成模块导入（import spam)此时，spam的__name__ = spam
+如果在spam.py里面添加一行：print __name__
+    在cmd执行python spam.py 得到结果：__main__
+    在test.py执行import spam，得到结果spam
+## 所以，在模块spam.py里面，if __name__ == "__main__"外面，不要有打印，不要执行函数
+而在，if __name__ == "__main__"： 来测试模块的功能

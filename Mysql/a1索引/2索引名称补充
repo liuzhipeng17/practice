@@ -1,0 +1,8 @@
+#1 覆盖索引（不是索引，而是一种名词）
+    直接从索引表获取数据
+    select id from student where id < 10; -- id为索引列，
+
+#2 索引合并（不是索引，而是一种名词）
+    使用多个单列索引查询
+    select * from student where id <10 and email = "liuzhipng";
+    -- email和id都是单列索引

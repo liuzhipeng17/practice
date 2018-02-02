@@ -1,0 +1,10 @@
+# 一个作者可以用多篇文章
+作者表				    文章表
+id	name	文章id		id	文章摘要    文章摘要    文章发表时间  文章标签
+1	alex1	1		    1	C1
+2	alex1	2		    2	C2
+3	alex1	3		    3	C3
+4	alex2	4		    4	C4
+
+
+# 只用了foreign key

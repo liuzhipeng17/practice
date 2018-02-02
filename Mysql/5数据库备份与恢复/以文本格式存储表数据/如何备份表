@@ -1,0 +1,9 @@
+mysqldump --tab=dir_name
+后面不要加分号
+
+dir_name是一个目录名称，在该目录下，每个表都有两个文件,比如t1表：t1.sql, t1.txt
+
+t1.sql是create table sql语句；t1.txt是表中的数据
+
+mysqldump --tab=tmp --fields-terminated-by=,
+         --fields-enclosed-by='"' --lines-terminated-by=0x0d0a db1

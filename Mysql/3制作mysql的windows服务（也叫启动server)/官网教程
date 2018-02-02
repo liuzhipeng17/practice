@@ -1,0 +1,38 @@
+
+
+先说,不作为windows server是怎么启动服务端和客户端的
+
+#1 下载源码之后，先进行初始化  mysqld --initialize-insecure
+    https://dev.mysql.com/doc/refman/5.7/en/data-directory-initialization-mysqld.html
+
+#2 启动server端，命令如下
+    C:\> "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqld" --console
+
+    --console会显示一些message，有助于解决问题（当然，如果没有--console,如果报错了会在data目录下
+    有个err日记）
+
+    当出现mysqld: ready for connections
+    Version: '5.7.21'  socket: ''  port: 3306
+    表明启动成功了
+
+#3 打开另外控制台，启动客户端 mysql -u root -ppassword
+
+下面着重讲如何以windows server来启动服务端
+https://dev.mysql.com/doc/refman/5.7/en/windows-start-service.html
+
+#1 管理员身份打开cmd（C:\Windows\System32\cmd.exe）
+
+#2 先关掉正在运行的server，
+    C:\> "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqladmin"
+          -u root shutdown
+
+#3 把server作为windows server (如果mysql服务之前就存在，删除服务mysqld --remove)
+    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqld" --install
+
+    当然更详细的命令为：
+    C:\> "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqld"
+          --install MySQL --defaults-file=C:\my-opts.cnf
+          （选项--install必须在前面）
+
+#4 启动mysql服务端（通过服务）
+    net start MySQL( 注意是不区分大小写的net start mysql也可以）

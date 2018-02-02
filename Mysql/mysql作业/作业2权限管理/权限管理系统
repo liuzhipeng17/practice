@@ -1,0 +1,26 @@
+设计4个表：
+用户表(uid,uname,sex,email，角色)-- 一个用户只能有一个角色
+角色表(rid,rname) -- rname 不能重复
+权限表(pid,pname,ptitile) -- pname 不能重复
+角色权限表(id, rid, pid)  -- rid, pid 不能重复
+
+
+权限管理：(只有administrator)
+1.新增权限
+2.分配权限
+3.删除权限
+4.修改权限
+
+角色管理：（administrator)
+1.浏览
+2.新增
+3.编辑
+4.删除
+5.授权
+
+用户管理：
+1.浏览
+2.修改
+3.删除
+4.增加
+5.授权

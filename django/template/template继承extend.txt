@@ -1,0 +1,17 @@
+# 在父类模块定义, 父类模板名字为index.html
+	{% block context %}
+	
+	{% endblock %}
+	
+	
+# 在子类模板使用：
+
+	{% extends 'index.html' %}
+	
+	{% block context %}
+	
+	 子类的实现
+	{% endblock %}
+	
+	
+	

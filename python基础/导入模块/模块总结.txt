@@ -1,0 +1,49 @@
+#在Python中，一个.py文件就称之为一个模块（Module）。py可以作为普通脚本运行
+# 在.py里加上：if __name__ = "__main__":就可以作为普通脚本使用。也可以作为模块给他人使用。
+
+# 模块分成三类：自定义模块，内建模块，第三方模块（官方下载）
+
+# 导入模块方式1：import spam(在test.py执行import spam, 会执行spam.py)
+    ## 第一件事：创建名称空间，存放spam.py定义的名字
+    ## 第二件事：基于刚创建的名称空间，执行spam.py
+    ## 第三件事：创建模块名spam,指向刚刚创建的名称空间(相当于名称空间的名字为spam)
+
+#  test多次导入模块，只会执行第一次
+    import spam
+    import spam
+    只会执行第一次
+
+# sys.moudles可以查看内存加载了哪些模块
+  是一个字典
+
+# 起别名import spam as x
+  起别名，相当于spam 和x 都是对创建的模块名称空间的引用
+
+# 导入模块方式2： from spam import money
+    ## 第一件事，第二件事都相同
+    ## 第三件事不同,没有将刚创建的名称空间改名为spam(在当前的test.py是找不到spam这个名字的)
+    ## 第三件事不同，而是将spam.money这个名字改名为money放在test.py上,不能加模块前缀访问money
+    ## 第三件事不同，因此要避免test.py上也定义了money变量,或者from spam import money as spam_money
+
+
+    ## 起别名 from spam import money as spam_money（推荐的方式）
+        ###这样即使test.py也有money，修改test.py的money，也不会修改spam_money了
+        ###避免了冲突，而且只想要我们要的名字（节省空间）
+
+# __name__变量，
+## 当spam.py当做普通脚本(python **.py,或者pycharm右键run)执行的时候，__name__ = __main__
+## 当把spam.py当成模块导入（import spam)此时，spam的__name__ = spam
+如果在spam.py里面添加一行：print __name__
+    在cmd执行python spam.py 得到结果：__main__
+    在test.py执行import spam，得到结果spam
+## 所以，在模块spam.py里面，if __name__ == "__main__"外面，不要有打印，不要执行函数
+而在，if __name__ == "__main__"： 来测试模块的功能
+
+
+# 模板变量限制访问
+
+## 注意这里是模块的访问限制，不是类的访问限制
+类似_xxx和__xxx这样的函数或变量就是非公开的（private），不应该被直接引用，比如_abc，__abc等；
+之所以我们说，private函数和变量“不应该”被直接引用，而不是“不能”被直接引用，
+是因为Python并没有一种方法可以完全限制访问private函数或变量，
+但是，从编程习惯上不应该引用private函数或变量。

@@ -1,0 +1,111 @@
+procedure [prə'sidʒɚ]
+
+#1 存储过程定义
+    将大量sql语句保存在mysql服务端数据库上，并给它起个别名。
+    目的是：让程序员不在写sql语句，解耦sql语句和程序员（非DBA程序员）
+
+    # 传输给服务端的数据更少（优点）客户端只需要call p1(),发送这条数据给服务端
+    # 程序员写存储过程，提交给DBA审核，改善性能
+    # DBA查看mysql慢日记，改善
+
+#2 存储过程和视图区别
+    从调用方式上，存储过程：call p1(), 视图:是一张临时表，select * from v1;
+    从功能上,存储过程里面可以包含insert，update等语句；
+             视图里面只能是select语句
+
+#3 创建存储过程语法
+    delimiter //
+        drop procedure if exists `p1`;  -- 分号不能少
+        create procedure p1()
+            begin
+                    select * from teacher;
+                    insert into teacher(tname) values('刘志鹏老师');
+            end
+        //
+    delimiter ;
+
+#4 复杂的存储过程（有in, out, inout参数）
+    delimiter //
+        drop procedure if exists `p2`;  -- 分号不能少
+        create procedure p2(
+            in n1 int,
+            out n2 int) -- 相当于python的引用传递（传递列表等），在里面修改了，在外面还可以获取
+            begin
+               set n2 = 123123;  -- 必须要是set，因为out即使外面n2 =0,0也传不进来
+               select * from student where sid > n1;
+            end
+        //
+    delimiter ;
+
+
+#5 调用存储
+    call p1()  #简单存储过程，无参数
+
+#6 调用复杂存储过程---有参数
+    set @v1 = 0;  # @v1表示session(类似局部）变量v1， 0是穿不进去的，
+    call p2(10, @v1);
+    select @v1;
+
+#7 pymysql如何调用无参的存储过程
+        import pymysql
+        conn = pymysql.connect(host="localhost", user="root", password="", database="db1", charset='utf8')
+        cursor = conn.cursor()
+        cursor.callproc('p1') # 如果存储过程有参数，以元组形式传给args
+        conn.commit()
+        result = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        print(result)
+
+#8 pymysql调用参数的存储过程
+
+        import pymysql
+        conn = pymysql.connect(host="localhost", user="root", password="", database="db1", charset='utf8')
+        cursor = conn.cursor()
+        v = 0
+        cursor.callproc('p2',(10,'v')) # 还是传两个参数
+        r1 = cursor.fetchall()
+        print(r1)  # 打印执行存储过程的结果
+
+        sql = 'select @_p2_0,@_p2_1'   # @_p2_0代表第一个参数
+        cursor.execute(sql)  # 执行sql语句
+        r2 = cursor.fetchall() # 拿到上面查询的结果
+        print(r2)
+
+        cursor.close()
+        conn.close()
+
+#9 为什么存储过程既有结果集，还要有out返回值
+    out --用来标识存储过程的执行结果；
+        -- 200 执行成功
+        -- 401 执行部分失败
+        -- 401 执行部分失败
+        ...
+
+#10 存储过程和函数的区别（从格式上，功能，调用方式区分）
+    # 参数上，存储过程的参数有关键字In，out，inout
+    # 功能上，存储过程可以执行select * 语句，但是函数不行
+    # 返回值，函数直接有返回值；存储过程是通过Out参数来获取返回值
+    # 从调用方式： 函数调用select function(), 存储过程调用call p1()
+    # out参数， 外面out参数值,是传递不进去的，所以要先set @out =
+    # inout参数，外面的inout参数值可以在存储过程里面使用
+
+
+#11 通过pymysql调用存储过程时候的注意事项
+    # 先执行存储过程，拿到结果集
+    # 要想获取out值，还需要进行一次查询,然后fetchall来获取查询结果
+        sql = 'select @_p1_0, @_p1_1'
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        print(result)
+
+    # 格式为什么是这样，是因为pymysql做的规范：
+    pymysql中的语句：cursor.callproc('p2',(10,2))
+
+    等效于mysql的语句：
+        set @_p2_0 = 10
+        set @_p2_1 = 2
+        call p2(@_p2_0, @_p2_1)
+
+    所以要想查询存储过程的参数，必须按照
+    select @_p2_0, @_p2_1；

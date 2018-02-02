@@ -1,0 +1,12 @@
+# accept系统调用(包含了两个阶段：wait for data, copy data, 都是操作系统进行)
+
+1 发送多次系统调用（system call)
+
+2 有效利用wait for阶段时间，wait for无阻塞
+
+3 两个阶段（wait for data非阻塞， copy data from kernel space to user space是阻塞的）
+
+
+缺点：系统调用发送过多；数据不是实时接收的
+
+system call: 系统调用（从用户态切成内核态）

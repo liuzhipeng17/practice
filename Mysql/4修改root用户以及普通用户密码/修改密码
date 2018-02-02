@@ -1,0 +1,10 @@
+修改root用户密码（进入到mysql数据库）
+ALTER USER user IDENTIFIED BY 'new_password'; （5.7）版本
+之前版本是：
+mysql> SET PASSWORD FOR user = PASSWORD('new_password');
+
+
+查看用户密码是否为空
+SELECT User, Host, HEX(authentication_string) FROM mysql.user;
+
+SELECT User, Host, Password FROM mysql.user;

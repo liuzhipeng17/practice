@@ -1,0 +1,145 @@
+#1 生成器基础
+    - 定义
+        在循环的时候不断推算下一个元素的值，而不是一下子创建空间存储所有元素，这样节省空间。
+        并且在适当的条件结束循环，这种一边循环一边计算的机制，称为generator生成器
+
+    - 生成器创建方法（两种）
+        a.将列表生成式的[]改成()-- 称为生成器表达式
+            - 列表表达式 l = [x**x for x in range(10)]
+            - 生成器： g = (x**x for x in range(10))
+        b.带yield的函数
+            -- 当列表生成表达式比较复杂的时候，可以用函数来实现
+        ps:
+            range(10) 和xrange(10)区别
+            range(10)是一个列表，而xrange(10)是一个生成器
+                print(range)得到是[1,2,3,4,5,6,7,8,9]
+                print(xrange)得到的一个生成器对象
+
+            range(10)会在内存中创建10个数字，而xrange不会创建，只有在循环的时候才会创建每个数字
+
+    - yield生成器（我简单的将带yield的函数称为yield生成器）
+        a.自定义一个生成器
+            def nrange(num):
+                temp = -1
+                while True:
+                    temp = temp + 1
+                    if temp >= num:
+                        return
+                    else:
+                        yield temp
+
+        b. 使用生成器方法(两种)
+            - next
+                程序：
+                    g = nrange(5)
+                    print(next(g))
+                    print(next(g))
+                    print(next(g))
+                    print(next(g))
+                    print(next(g))
+                    print(next(g))
+
+                程序输出：
+                    Traceback (most recent call last):
+                      File "F:/oldboy/生成器/自定义生成器.py", line 16, in <module>
+                        print(next(g))
+                    StopIteration
+                    0
+                    1
+                    2
+                    3
+                    4
+
+                可以看到每次调用next(g)，就计算出g的下一个元素的值，
+                直到计算到最后一个元素，没有更多的元素时，抛出StopIteration的错误。
+                这种方法不是很好使，而且还没有对异常StopIteration处理。
+
+            - for循环
+                g = nrange(5)
+                for num in g:
+                    print(num)
+
+                通过for循环来迭代它，并且不需要关心StopIteration的错误。
+
+    - yield生成器生命周期
+        也就是什么时候结束for循环，对函数改造的生成器，当执行到return或者函数最后一条语句时
+        就结束for循环
+
+    - yield生成器和函数不同
+        如果一个函数定义中包含yield关键字，那么这个函数就不再是一个普通函数，而是一个generator；
+        区别在于：执行流程不一样。
+                函数是顺序执行，遇到return就返回；而生成器在每次调用next的时候，遇到yield返回，
+                下次调用next的时候，接着上次的yield次继续执行
+
+#2 生成器使用next和send区别
+    send:
+        1.使用send前必须使用了一次next
+        2.执行g.send(10)时，会将send函数参数即10视为yield表达式（注意不是yield右侧的表达式）的结果，
+          然后，程序会继续推进到下一个yield那里，
+          最后，将yield 右侧的表达式（注意不是yield表达式）的结果作为send()函数的返回值，返回给外界。
+
+    next:
+        1.第一次使用Next时，遇到yield返回，并将yield右边表达式的结果作为next的值返回
+        2.之后使用next和send基本一样，不同的是将None作为yield表达式的结果，
+          然后，程序会继续推进到下一个yield那里，
+          最后，将yield右侧的表达式结果作为next()函数的返回值，返回给外界
+
+#3 m = yield value 理解
+     只要理解一句话m = yield 5 ,是将表达式"yield 5" 的结果返回给m, 而不是5，
+     而yield 5表达式结果的值和send, next有关。
+     如果是send(arg)是将arg作为 yield 5表达式结果赋给m
+     如果是next，是将None作为yield 5 表达式结果赋给m；
+     然后程序推进到下一个yield那里
+     最后，将yield右边（注意右边两字）的表达式“5”作为next或者send函数的返回值，返回给外界
+
+#4 实例next
+    # -*- coding: utf-8 -*-
+    def f():
+        print("start")
+        current = yield "hello"
+        print('current=', current)
+        while True:
+            value = yield "bad"
+            print("value=",value)
+            # value = value + 'not' # 此行会报错，因为value会为None, 不能和字符串进行相加
+
+
+    g = f()
+    s1 = next(g)
+    print('s1=',s1)
+    # 第一次Next时，停止在第5行, 将yield右边的表达式（无即None)作为next()的返回值
+
+    s2 = next(g)
+    print('s2=', s2)
+    # 第二次的next,会将None作为yield表达式" yield hello"的值赋给current, 即current = None
+    # 然后程序往下执行，遇到yield "bad"停止，将yield右边的表达式"bad"作为第二次next的返回值
+
+    s3 = next(g)
+    print('s3=',s3)
+    # 第三次next,会将None作为yield表达式”yield bad"的值赋给value, 即value = None,
+    # 程序往下执行，遇到value = yield "bad"停止，将"bad"作为第三次next的返回值
+
+#5 实例send
+    # -*- coding: utf-8 -*-
+    def f():
+        print("start")
+        current = yield "hello"
+        print('current=', current)
+        while True:
+            value = yield "bad"
+            print("value=",value)
+            # value = value + 'not' # 此行会报错，因为value会为整形, 不能和字符串进行相加
+    g = f()
+    s1 = next(g)# 这一步不能少
+    print(s1)
+    # 第一次Next时，停止在第5行, 将yield右边的表达式（无即None)作为next()的返回值
+
+    s2 =g.send(10)
+    print(s2)
+    # 生成器调用第一次send时，将send参数10代替表达式"yield hello"的值，赋给current,
+    # 然后程序往下执行，在遇到yield bad停止，将"bad"作为第一次send()函数的返回值返给外界
+
+    s3 = g.send(20)
+    print(s3)
+    # 生成器第二次调用send时，将send参数20代替表达式"yield bad"赋给 value
+    # 程序往下执行，然后遇到yield bad停止，将"bad"作为第二次send()函数的返回值返给外界

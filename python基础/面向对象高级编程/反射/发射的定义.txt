@@ -1,0 +1,14 @@
+# 反射：通过字符串的形式访问对象（模块对象，类和类实例化对象）的属性
+反射常用的方法：hasattr, getattr, delattr, setattr
+hasattr(实例化对象，字符串）
+setattr(实例化对象，字符串key, 字符串value)
+
+s = Student('lzp', 'male')
+# 查看某个对象是否具有某个属性
+print hasattr(s, 'country') # 在dir(）列表里面查找是否有country这个元素
+# 获取某个属性
+print getattr(s, 'country')
+# 设置某个属性
+setattr(s, 'country', 'India')
+# 再次查看country属性
+print getattr(s, 'country')

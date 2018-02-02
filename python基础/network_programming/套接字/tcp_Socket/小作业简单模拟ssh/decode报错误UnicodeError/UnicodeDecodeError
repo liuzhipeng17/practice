@@ -1,0 +1,5 @@
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe6 in position 0: ordinal not in range(128)
+
+# 很明显是说：bytes字符不是普通的ascii码字节，ascii不能将其解码。
+
+# 解决方法：

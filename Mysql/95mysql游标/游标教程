@@ -1,0 +1,45 @@
+游标cursor --性能不高，mysql里面实现循环
+#0 需求
+    将a表数据id,num 中,num 变成Num+id, 后拷贝到b表
+
+#1 使用伪代码
+    1 声明游标my_cursor
+    2 获取a表数据，并存储到游标上
+        my_cursor = select id, num from tb_a;
+
+    3 for循环读取游标中每一行数据
+        for row_id, row_num in my_cursor:
+            # 需要检测是否循环完，break
+            insert into tb_b(name) values(row_num + row_id);
+
+#2 使用游标的mysql代码
+    delimiter //
+        drop procedure if exists `p5`;
+        create procedure p5()
+        begin
+            declare row_id int;
+            declare row_num int;
+            declare done int default false;
+
+            declare tmp int;
+
+            declare my_cursor cursor for select id, num from A;
+            declare continue handler for not found set done =True;
+
+            open my_cursor;
+                L1: loop
+                    fetch my_cursor into row_id, row_num;
+                    if done then
+                        leave L1;
+                    end if;
+
+                    set temp = row_id + row_num;
+                    insert into B(num) values(temp);
+                end loop L1;
+            close my_cursor;
+        end //
+    delimiter ;
+
+
+#3 使用游标场景
+    对表每一行都需要计算

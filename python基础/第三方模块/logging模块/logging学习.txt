@@ -1,0 +1,43 @@
+# logging 的配置有，两种方式
+
+1 basicConfig函数
+2 logger对象(推荐）
+
+basicConfig函数的参数有：
+level=logging.DEBUG
+format
+datefmt 时间格式
+filename 将日志写到文件，而非控制台显示
+filemode='a'  a追加，w覆盖
+
+下面是部分参数介绍
+datefmt= "%Y-%m-%d %H:%M:%S"
+format格式化
+%(asctime)s
+%(name)s
+%(message)s 日志输出的消息
+%(lineno)s  日志输出代码所在的行
+%(funcName)s
+%(module)s
+
+
+2 logger对象
+
+def get_logger():
+    # 设置logger等级
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    # 设置文件流和标准输出流stream
+    fh = logging.FileHandler('logger2')
+    sh = logging.StreamHandler()
+    # 设置文件流的消息格式
+    fm = logging.Formatter("%(asctime)s [%(lineno)s] %(message)s")
+    fh.setFormatter(fm)
+    logger.addHandler(fh)
+    # 设置标准输出的消息格式
+    sh.setFormatter(fm)
+    logger.addHandler(sh)
+    return logger
+
+
+

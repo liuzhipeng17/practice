@@ -1,0 +1,13 @@
+# 当客户端send的时候，是将send消息交给操作系统，然后操作系统从传输层到物理层，驱动网卡，将数据传递给另外
+# 一台机器。
+while True:
+    msg = raw_input("input msg>>> ").strip()
+    phone.send(msg)
+    data = phone.recv(1024)
+    print "服务端返回内容：%s" % data
+# 当send()空消息的时候，send()会继续执行，但是会卡在phone.recv（1024）
+# 从操作系统拿数据，但是操作系统此时没有接收到数据。所以会卡在这里。
+
+所以发送消息，不允许为空
+
+# 所以无论客户端还是服务端，都是卡在recv()

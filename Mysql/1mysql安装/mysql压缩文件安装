@@ -1,0 +1,33 @@
+# 下载并解压。压缩包地址：https://dev.mysql.com/downloads/file/?id=471342
+# 安装教程：https://dev.mysql.com/doc/refman/5.7/en/windows-install-archive.html
+# 在bin目录找到可执行文件
+    mysql(客户端可执行文件）
+    mysqld(服务端可执行文件)
+
+# 服务端初始化（创建用户，和默认的数据库）  mysqld --initialize-insecure
+        #帮我们创建了用户'root'@'localhost' 密码为空（-insecure就是创建密码为空的root用户）
+        # mysqld --initialize(root用户密码不是空，而是一个随机密码）
+        # 详情请查看官网
+        https://dev.mysql.com/doc/refman/5.7/en/data-directory-initialization-mysqld.html
+
+
+        当然，还可以添加一些参数：设置data的生成目录
+        先在c:\my.ini（目录位置随意，修改成）
+        [mysqld]
+            basedir=C:\\Program Files\\MySQL\\MySQL Server 5.7
+            datadir=D:\\MySQLdata
+        然后再初始化
+        mysqld --defaults-file=c:\my.ini --initialize,
+
+
+# 启动服务端（直接运行mysqld)
+
+# 客户端连接：mysql -u root -p
+
+# 客户端发送指令：
+    show databases;  查看有哪些数据库（就是查看data目录下的文件夹）
+    create database 'db1' 创建数据库（就是在data目录下创建文件夹）
+
+# 添加环境变量（bin目录）
+
+#

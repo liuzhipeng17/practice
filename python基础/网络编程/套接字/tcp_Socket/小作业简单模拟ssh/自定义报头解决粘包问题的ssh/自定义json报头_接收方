@@ -1,0 +1,32 @@
+
+#发送方发送数据的顺序（数据都要转成bytes格式）
+    ## 先发报头长度（前提是得到报头的bytes格式，len(head_bytes)）
+    ## 再发报头
+    ## 再发数据
+
+
+#接收方的顺序：
+    ## 接受报头长度
+    ## 接收报头
+    ## 接收数据
+
+#接收报头长度
+    ## head_len_bytes = connect.recv(4)
+    ## head_len_int = struct.unpack('i',head_len_bytes)[0]
+
+#接收报头
+    ## head_bytes = connect.recv(head_len_int)
+    ## head_str = head_bytes.decode('utf-8')
+    ## head_dict = json.loads(head_str)
+    ## data_size = head_dict["data_size"]
+
+#接收数据
+    recv_data = b''
+    recv_size = 0
+    while recv_size < data_size:
+        data = phone.recv(1024)
+        recv_size += len(data)
+        recv_data += data
+    print("服务端返回内容：%s" % recv_data.decode('gbk')) # 如果服务端是linux，改成utf-8
+
+

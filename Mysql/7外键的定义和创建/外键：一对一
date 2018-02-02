@@ -1,0 +1,18 @@
+一对一 = foreign key + unique Index
+
+# foreign key: 限制住该列的值只能从另外一张表某一列取值
+# unique index: 限制住该列的值不能重复
+
+
+example:
+    一个用户只有一个博客
+    用户表和用户登录表
+
+# 博客园限制了一个用户只能有一个博客
+用户表				    博客表
+id	name	博客id		id	博客uri
+1	alex1	1		    1	C1
+2	alex2	2		    2	C2
+3	alex3	3		    3	C3
+4	alex4	4		    4	C4
+

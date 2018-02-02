@@ -1,0 +1,5 @@
+# 报无法启动程序，因为计算机中丢失msvcr120.dll
+（查找路径：c:\windows\system32\MSVCR120.dll找不到，在网上下载一个）
+
+直接安装visual studio 2013 组件包vcredist_x86.exe 和vcredist_x64.exe，
+下载地址：https://www.microsoft.com/zh-cn/download/details.aspx?id=40784

@@ -1,0 +1,18 @@
+# 如果客户端和服务端在同一台机器上：
+mysql -u root -p
+
+# 如果客户端和服务端不在同一台机器上：
+mysql -h host -u user -p
+
+
+# 退出mysql
+QUIT（大写，小写也可以）或者：\q
+ linux还可以快捷方式ctrl +D
+
+
+#如果想命令行就输入密码了
+mysql -h host -u user -ppassowrd
+# -p和密码之间不能有空格
+
+mysql -h host -u user -p password
+表示连接上后就直接进入password这个数据库了，

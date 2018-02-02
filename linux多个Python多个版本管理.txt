@@ -1,0 +1,105 @@
+https://github.com/pyenv/pyenv
+#1 pyenv就是管理多个python版本的工具，下面是其安装记录
+	-- 安装git
+		sudo apt-get install curl git-core
+		
+	-- 安装pyenv
+		curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
+		
+	
+	-- 修改bashrc(这样才可以运行pyenv命令，否则需要进入$HOME/.pyenv/bin目录下，才可以运行pyenv命令）
+
+		$ echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
+		$ echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+		$ echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+		$ source ~/.bashrc
+
+	
+	-- 查看pyenv可以检测到python版本
+		pyenv versions
+		
+		
+	-- 查看pyenv可以安装哪些Python版本
+		pyenv  install --list 
+		
+		
+	-- 安装python 3.6.3
+		pyenv install 3.6.3
+		
+		-- 会报错， 需要一些依赖包（这是官网推荐的，）
+		
+			sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+			libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+			xz-utils tk-dev
+			
+			-- 安装这些依赖包如果报错： E “There are problems and -y was used without --force-yes”
+				-- 搬运工
+					https://stackoverflow.com/questions/31294150/there-are-problems-and-y-was-used-without-force-yes
+				
+				-- 解决方案1
+					sudo apt-get update
+					
+				-- 解决方案2（没有验证过）
+					sudo vim /etc/apt/apt.conf.d/02allow-unsigned
+					添加下面的内容：
+					APT::Get::AllowUnauthenticated 1;
+					
+					
+		-- 非官网
+			sudo apt-get install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev llvm libncurses5-dev libncursesw5-dev
+
+
+	-- pyenv rehash
+	
+	
+	-- pyenv versiosn
+		vagrant@vagrant-ubuntu-trusty-64:/vagrant$ pyenv versions
+		* system (set by /home/vagrant/.pyenv/version)
+		  3.6.3
+		  
+		带星号
+
+
+	-- 将python 3.6.3设置为当前Python版本
+	
+		pyenv global 3.6.3
+		
+		python -V # 可以看到python 版本已经切换为3.6.3版本
+		
+	
+	-- 在 system 和 3.6.3版本切换
+	
+		pyenv global system  # 切换到system版本
+		
+		
+#2 利用virtualenv安装python环境
+
+	# 前提是已经安装virtualenv
+
+	-- 安装python3.6.3的虚拟环境
+		pyenv virtualenv 3.6.3 env3_6_3
+		
+		
+		-- pyenv versions 可以看到env3_6_3这个虚拟环境
+		
+	-- 切换到虚拟环境env3_6_3
+		pyenv activate env3_6_3
+		
+	
+	-- 退出当前的虚拟环境
+		pyenv deactivate
+		
+	-- 删除env3_6_3虚拟环境
+		rm -rf ~/.pyenv/versions/env3_6_3
+	
+		
+	
+	
+	
+	
+	
+		
+		
+	
+		
+	

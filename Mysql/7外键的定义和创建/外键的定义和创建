@@ -1,0 +1,57 @@
+#1 外键的定义
+   员工表里面的department列，只能是department表中的值。
+   那么我们就可以对员工表的department值进行约束。
+
+
+#2 最初想到创建表的方法，
+   员工表
+   id, name, department
+   1   alex  it
+   2   lzp   it
+   3   egon  hr
+   4   wpq   gg
+
+   部门表
+   id, name
+   1   it
+   2   hr
+   3   gg
+
+   # 上面的方法虽然可行，但有着很大的缺点：
+   1 员工表没有对department的值进行约束（虽然可以用enum），
+    但是如果加入了一个员工，department随便写了个字符串，员工表不会报错
+
+   2 长字符串占用空间，比整数大
+
+
+#3 采用外键的方式，即限制员工表department的值只能从部门表里面选择，
+又节省了空间（采用部门表id代替了字符串）
+
+#4 创建外键语法
+    create table userinfo(
+        uid int auto_increment primary key,
+        name varchar(20),
+        department_id int, # 类型是int，不是char
+        #创建了一个外键,fk_user_depart
+        constraint fk_user_depart foreign key ("department_id") references department('id')
+     )engine=innodb default charset=utf8
+
+     create table department(
+        id int auto_increment primary key,
+        name varchar(20)
+     )engine=innodb default charset=utf8
+
+#5 外键语法解析
+     #创建了一个外键,fk_user_depart
+     constraint fk_user_depart foreign key ("department_id") references department('id')
+
+     constraint 外键名  foreign key ("限制列名") references 表名('id')
+
+#6 一张表可以有多个外键，外键的别名（一对多）
+
+
+#7 foreign key 不允许重复
+
+    constraint fk_user_depart foreign key (id1, id2) references department(nid, pid)
+    # 可以这么使用，前提是(nid,pid)是department的主键
+    # 主键是可以多列组合d primary key(nid, pid)

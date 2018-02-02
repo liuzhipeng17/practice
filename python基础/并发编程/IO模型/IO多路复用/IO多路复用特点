@@ -1,0 +1,11 @@
+#
+rlist.append(sock)
+r, w, e = select.select(rlist, wlist, elist)
+# 这样之后，select会监听套接字列表中rlist中的所有的变化，并将有变化的套接字对象返回到r中去
+# 如果是服务端，只需要开一个套接字，所有服务端都和这个套接字进行连接
+
+# 两个阶段都是阻塞的（wait for data, copy data)， select 代替了wait for data
+# 可以实现并发，处理多个连接
+# select监听内核用户空间数据是否有变化，select之后还有多一个系统调用(accept,但是只有一个阶段copy data)
+
+# select + 多线程是方向

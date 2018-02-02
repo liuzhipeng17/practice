@@ -1,0 +1,29 @@
+# 仅仅从数据库上来设计
+
+a. select * from userinfo3 limit 20000,10;
+-- 不成熟；一开始很快，随着limit a,0中a值越大，扫描物理表中的数据就越多。
+   limit 20000,10; 就要扫描20010条数据，肯定很慢
+
+b. 从索引表中扫描：
+    select * from userinfo3 where id in (select id from userinfo3 limit 20000,10);
+
+c. 从索引表中获取数据，但不要扫描那么多，而是直接定位到id
+   记录当前页的最小和最大Id(第一页开始，肯定很快，每一页都记录当前页的最小和最大id,）
+
+   用Python代码记录当前页的最小和最大id,（当前页会记录20条数据，比如10-20）
+   #1 页面只显示上一页，下一页（一页显示10条数据）
+        # 从当前页获取到max_id, min_id
+        下一页：
+            select * from userinfo3 where id > max_id limit 10;
+        上一页：
+            select * from userinfo3 where id < min_id order by id desc limit 10;
+
+   #2 页面显示上一页 192 193 [196] 197 198 199 下一页
+        当前页为196，用户点击199的方案：(注意id是不连续的）
+            select * from userinfo3 where id in(
+            select id from
+                (select id from userinfo3 where id > max_id limit 30)
+                    as N order by N.id desc limit 10)
+
+
+d. 由于id不连续，所以不能使用between start_id and end_id

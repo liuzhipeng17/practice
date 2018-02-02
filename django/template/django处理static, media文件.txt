@@ -1,0 +1,50 @@
+# 在生产环境中，静态文件都是交由web服务器（nginx)处理， django本身不处理静态文件；
+
+# nginx处理请求如下：
+	nginx.conf  location:
+		静态文件， 由nginx处理
+		不是静态文件， 由django处理
+		
+# 但是，django本身也提供处理静态文件， 但是不推荐在生产环境用，而是在测试环境用（开发环境）：
+
+	# INSTALL_APPS 里面添加： 'django.contrib.staticfiles' 
+	
+	# 在urls.py里面配置：
+		if settings.DEBUG:  
+			urlpatterns += [
+							url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT }),
+							url(r'^static/(?P<path>.*)$','django.views.static.serve',{'document_root':settings.STATIC_ROOT}),]
+		
+		
+# static_root， static_url
+
+	staic文件一般是css, js, image文件， 这些文件一般保存在以下位置：
+	
+	1) STATIC_ROOT， 这是由settings.py设置， 一般用来存储公共的js, css, image文件，
+	2) app下面的static文件夹， 
+	3) STATICFILES_DIRS， 指定额外的静态文件存储位置
+	
+	
+	# 注意2， 当执行python manage.py collectstatic时， django会遍历INSTALL_APPS里面所有app下面的staic文件夹，将里面的所有文件（会按文件夹)拷贝到
+	STATIC_ROOT目录。
+	
+	因此，最好的办法是在每个app目录下：新建static/app_name 目录，里面再新建css,js, image目录
+	
+	
+# MEDIA_ROOT, MEDIA_URL
+
+	media一般是用户上传的文件，（比如用户上传的头像文件，文章发表的图片文件等）
+	
+	注意： 这里一定要和model设置的imageField匹配。
+	如果在settings.py设置： 
+	MEDIA_ROOT = /vagrant_data/django_commitity
+	front_image = models.ImageField(upload_to='images/%Y/%m/%d', null=True)
+	
+	那么上传的图片会存储在; /vagrant_data/django_commitity/images/2017/12/12
+	
+
+	MEDIA_URL 是指浏览器访问的地址
+	磁易购的设置为：MEDIA_URL = 'http://m.ciyigou.com/media/'
+	
+	
+

@@ -1,0 +1,16 @@
+#1 从程序级别
+    pymysql 调用的使用参数，而不是自己拼接sql语句
+
+
+#2 从Mysql级别--动态执行sql语句
+    delimiter //
+        drop procedure if exists `p5`;
+        create procedure p5(
+        in nid int)
+        begin
+            set @nid = nid; -- 必须要设置session级别变量
+            prepare prod from 'select * from student where sid > ?';  -- ？相当于占位符
+            execute prod using @nid; -- 填充上面的sql语句中?
+            deallocate prepare prod;
+        end//
+    delimiter ;

@@ -1,0 +1,67 @@
+#3 加速查找：
+    按索引列查找，会很快；原因？
+        索引相当于字典的目录；如果按非索引列，进行查询，就相当于没有目录的字典；
+        只能从头开始往后找，假设要找最后一页，那就得翻遍了整个字典。如果数据很大
+        那就相当耗时。
+
+        专业术语：
+            按无索引列查找，就会从前到后，依次查找
+            按索引列查找，先去索引文件查找（找到数据在表的位置）
+
+        创建索引：
+            为name列创建索引--额外创建一个文件（特殊的数据结构）
+            为email列创建索引--额外创建一个文件（特殊的数据结构）
+
+        索引文件为什么能加速查找
+            # hash 索引
+                如果是采用hash索引来创建索引的话，会为该列创建一个索引表，表里面的结构为
+                hash(该列的值）， 该行数据在内存中的地址。
+
+                创建hash索引的时候，会将每一行的数据转换成hash值，然后插入到索引表里面，
+                并且插入该行数据在内存的地址也存储到索引表。
+
+                所以查找数据的时候，会到索引表查找，查找到后，直接跳到内存获取数据返回。
+
+            缺点： 索引表里面的hash值列和 源表索引列 顺序不一致（）（不连续）
+            所以，对单值的查询会很快（精确),但查找连续的时候时候，会慢。
+
+            # btree索引
+                将索引列的值转换成数值，然后按二叉树存储。查找次数最多是层数。
+            优点：
+                二叉树是有顺序（连续）的，所以范围查找是很快。(where id >20 ; id between 10 and 20;
+                innodb的索引是btree索引。
+
+#4 创建了索引特性；
+    a. 需要额外创建文件，保存特殊的数据结构（hash表，或者二叉树）
+    b. 查询快，但插入更新删除慢（因为需要插入更新删除额外的文件）
+    c. 命中索引（只有命中索引，才能快）
+        1 查询快，但前提是用到索引列了；
+        2
+
+#4  创建索引语法（有两种方式）
+    1 在创建表的过程中，创建索引
+        create table student(
+        id int auto_increment primary key,
+        name char(20) not null,
+        email vchar(64) not null,
+        index ix_email (email)  -- 创建了索引ix_email
+        )engine=innodb default charset=utf8;
+
+    2 在完成表后，再创建索引
+        create index ix_name on user(name);
+
+#5 创建唯一索引
+    方式1
+        create table student(
+        id int auto_increment primary key,
+        name char(20) not null,
+        unique ix_name (name)  -- 创建了唯一索引索引ix_name
+        )engine=innodb default charset=utf8;
+
+    方式2 在完成表后，再创建索引
+        create unique index ix_name on user(name);
+
+    删除唯一索引： drop unique index ix_name
+
+#6 创建联合索引
+    create index ix_name_email on user(name, email);

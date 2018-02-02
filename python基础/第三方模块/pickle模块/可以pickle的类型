@@ -1,0 +1,11 @@
+The following types can be pickled:
+
+None, True, and False
+integers, floating point numbers, complex numbers
+strings, bytes, bytearrays
+tuples, lists, sets, and dictionaries containing only picklable objects
+functions defined at the top level of a module (using def, not lambda)
+built-in functions defined at the top level of a module
+classes that are defined at the top level of a module
+instances of such classes whose __dict__ or the result of calling __getstate__() is picklable
+(see section Pickling Class Instances for details).

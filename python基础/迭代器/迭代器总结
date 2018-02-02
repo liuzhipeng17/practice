@@ -1,0 +1,70 @@
+# 区分可迭代对象iterable, 迭代器iterator, 生成器generator
+    a. iterable
+        可直接用for循环的对象，都称为可迭代对象，
+        from collections import Iterable
+        使用isinstance(a, Iterable)判断a对象是否为可迭代对象
+
+        因此，list, dict, str都是iterable
+    b. iterator
+        凡是可作用于Next()函数的对象，都是迭代器类型，表示一个惰性计算的序列
+        记住迭代器是有状态的，用过一轮之后，就不要反复使用了
+    c. generator
+        生成器也是迭代器， 但迭代器不是生成器。
+        生成器一般用于：当函数需要返回一个序列，这个时候最好将函数改造成generator,
+        这样做会比返回一个列表更省内存
+
+    d. iterator 和iterable区别
+        迭代器是惰性的,用多少生产多少;可迭代对象是一下全部返回,不管用到用不到.
+        集合数据类型如list、dict、str等是Iterable但不是Iterator，
+        不过可以通过iter()函数获得一个Iterator对象。
+
+        在python中迭代器对象是一个数据流， 数据流是有序的但是不能提前知道它的长度，
+        只能不断通过Next计算下一个数据，所以迭代器是惰性的。
+
+    e. 如何将List，dict, str变成迭代器
+        使用iter(list)方法
+        from collections import Iterator
+        l = [1,2,3]
+        s = iter(l)
+        print(isinstance(s, Iterator))
+
+# python中for循环机制 -- 迭代器协议
+    - 迭代器协议(循环原理)
+        python在for循环中遍历某种容器的内容时，比如for x in foo, python实际上会先调用iter(foo)
+        将foo对象转成迭代器。
+            a.  如果foo是迭代器，则会调用foo.__iter__方法，该方法返回foo本身.
+            b.  如果foo是可迭代对象，则会生成一个迭代器
+
+        然后后for循环中, 会调用内置的next方法（注意这个方法不是迭代器的方法),
+        next方法会调用迭代器本身的__next__方法，直到元素耗尽产生StopIteration异常break出循环
+
+    for x in [1,2,3,4]:
+        print(x)
+
+    等效于：
+        it = iter([1,2,3,4])
+        while True:
+            try:
+                x = next(it)
+                print(x)
+            except StopIteration as e:
+                break
+
+
+# 文件的read和xreadline区别
+    read会读取文件所有内容到内存，占空间
+    xreadline只有在循环的时候，才获取
+
+    自己定义一个读文件的迭代器容器
+    def NReadlines():
+        with open('log','r') as f:
+            while True:
+                line = f.next()
+                if line:
+                    yield line
+                else:
+                    return
+
+    for i in NReadlines():
+        print i
+

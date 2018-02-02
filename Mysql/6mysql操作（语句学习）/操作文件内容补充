@@ -1,0 +1,182 @@
+#1 增（一共有三种方式）
+
+    # 插入单条记录
+    insert into t1(name,...) values('lzp',..);
+    注意一点：t1(name,...)必须包含所有非空列（除去自增列）
+
+    # 插入多条记录
+       insert into t1(name,age) values('lzp',12),('alex',30);
+
+    # 拷贝复制(拷贝t2表的数据到t1)
+       insert into t1(name,age) values select name,age from t2;
+
+#2 改
+    update t1 set name='b',age=13 where name='lzp';
+    update t1 set name='c' where name='alex';
+
+#3 查（重点）
+
+    select [...] from tb [...]
+
+    从前面[]扩展：
+        select name as cname, age from tb1; # 起别名
+        select name, age, 1 from tb1;  # 多显示一列，该列的值为常量
+        select name, age, variable from tb1; # 多显示一列，该列的值为变量，变量的定义在前面实现
+
+    从后面的[]扩展：
+    1 where
+        select name, age from tb1 where id in （2,4,6） # id =2 或id=4,或id=6 集合(2,4,6)
+        select name, age from tb1 where id <> 3         # <>不等于（小于<或者大于>）
+        select name, age from tb1 where id not in (2,4,6)
+        select name, age from tb1 where id between 5 and 12; # id in [5,12] #闭区间集合[5,12]
+        select name, age from tb1 where id in (select id from tb2); #
+        通配符%(多个任意字符）， 下划线_（一个任意字符）
+            select name, age from tb1 where name like "a%" # 以a开头的名字
+
+        note: 不能允许这种 where id =1 and id=2, 这样查到的肯定是Null
+    2 分页limit [start], count  ; start
+        是从0开始，默认值=0；count表示查看的记录数
+        select name, age from tb1 limit 10; #查看第一条数据到第10条数据；
+        select name, age from tb1 limit 10,10; #查看第11条数据到第20条数据
+
+        简单分页: page = int(input('').strip())
+                  start = (page-1)*10
+                  select name, age from tb1 limit start,10
+
+         limit 10 offset=20; 等效
+
+    3 order by 排序
+        order by 列名 [asc|desc]  # 列名都是整数
+        select name, age from tb1 order by id desc;# 按id从大到小排序
+
+        select name, age from tb1 order by id desc limit 0,2;
+
+        # 多列排序
+        order by cow_1 desc, cow_2 desc
+
+        # 注意不是order by cow_1, order by cow_2
+        先按cow_1降序排，如果cow_1有相同的记录，对cow_1相同的记录按cow_2进行降序排
+
+    4 分组group by + 聚合函数
+
+        group by part_id： 可以理解成，将part_id相同的折成一条记录（怎么折？去重（最好不用distinct）
+        对于相同的记录，可以根据函数count(),max(),min()，sum(),avg()折成一条记录
+        这些函数称为聚合函数
+
+        example1:
+        用户表，部门表，查看每个部门有多少人
+        select part_id, count(id), max(id) from tb1 group by part_id;
+
+    5 分组group by + 聚合函数 + 二次刷选（having)
+        对聚合函数结果进行二次刷选时，必须用having
+        select part_id, count(id) from tb1 group by part_id having count(id) > 1
+        # 刷选出部门人数大于1的部门
+
+
+    6 连表操作
+        将所有表select出来，然后告诉他们的关系
+            select * from user, department where user.part_id = department.id
+
+        推荐：left join ...on （之前版本性能更好，目前版本两者性能是一致）
+            #将所有表select 出来; select * from tb1 left join tb2
+            # on tb1.part_id = tb2.id 告诉他们表之间的关系
+
+            select * from user left join department on user.part_id = department.id
+
+    7 连表操作left join 和right join， inner join 区别
+            select * from tb1 left join tb2 where ...
+            tb1会全部显示，左边的表会全部显示；
+
+            inner join 等效于将实现left join连表，后将Null出现的整行隐藏（不显示）
+
+
+    8 多张表连接
+            select * from tb1
+                left join tb2 where ...  # 此时只能告诉tb1和tb2的关系
+                left join tb3 where ...  # 此时可以告诉tb1和tb3的关系，tb2和tb3的关系（此时，已经将tb1,tb2，tb3关联进来了）
+
+            连表的时候，如果遇到列名相同，*可变成表名.
+                select tb1.id,
+                       tb2.id,
+                       tb3.id
+                from tb1
+                    left join tb2 where ..
+                    left join tb3 where ..
+
+            举例：  http://images2015.cnblogs.com/blog/425762/201608/425762-20160803224643778-2071849037.png
+                    http://www.cnblogs.com/wupeiqi/articles/5729934.html
+            学生，班级，老师，课程，成绩表：
+
+
+            学生表：foreign key 班级表
+            班级表：
+            课程表：foreign key 老师
+            成绩表：学生id, 课程id, 分数； foreign key 学生表， foreign key 课程表
+
+    #9 临时表
+        将查询得到的数据，作为一个临时表；在内存中存储，但并没有写到硬盘上。
+        语法：
+        (select * from tb1 where age > 20) as B;
+        select sid from（select * from tb1 where age > 20) as B;
+
+
+    #10 增加显示列(前提：select score from tb1 where name="yuwen"只能是一个值）
+
+        select id,  (select score from tb1 where name="yuwen") from tb2;
+        tb1和tb2不是同一表，增加的显示列不是处理同一个表同一行的数据
+
+    #11 增加显示列
+        select id, (select score from tb1 as s2 where s2.id= s1.id) as score from
+        tb1 as s1
+
+        # 最外层的循环，一行一行数据
+        # 里面的循环，每一行中的一列一列
+
+    #12 条件语句
+        case when min(num) < 10 then 0 else 1 end as c
+
+    #13 mysql的三元运算
+        if(True, 1,0)
+        # 计算课程平均分从高到底显示，显示任课老师
+        avg(if(isnull(score.num), 0, score.num))
+        # 因为为空的时候无法计算
+
+        select score.course_id, course.cname, teacher.tname, avg(if(isnull(score.num), 0, score.num)) as average from score
+                left join course on score.course_id=course.cid
+                left join teacher on course.teacher_id=teacher.tid
+                group by score.course_id
+                order by average desc;  # 此时可以用average,但是在select里面不能用average
+
+    #14 双重循环
+        select * from
+            (select
+                A.student_id,
+                A.course_id,
+                A.num,
+                (select B.num from score as B where B.course_id = A.course_id order by B.num desc limit 0,1) as frist_s,
+                (select B.num from score as B where B.course_id = A.course_id order by B.num desc limit 1,1) as second_s
+            from score  as A)
+        as C  where C.num >= C.second_s
+
+    #15 多表操作，直接用连表，会比较好理解和设置where
+
+
+    #16 # 查询没有学过李平老师课学生的姓名，id---没有学过李平老师任何一门课的学生
+            先刷选出选过李平老师任意一门课的学生，
+
+        # 碰到Not,一定要在最顶一层进行Not, 在学生表里面not in (学过老师课程学生的id,还有进行分组过滤掉重复的)
+        # 先查到李平老师教过哪些课；
+
+        -- select student.sid,student.sname from student where student.sid not in (
+        -- 	select student_id from score
+        -- 	where score.course_id in (select cid from course left join teacher on course.teacher_id=teacher.tid where teacher.tname='李平老师')
+        -- 	group by student_id);
+
+
+    #17  where  group by having : 先进行where一次刷选，再进行group having刷选
+
+
+    #18  union 上下连表（union自动去重，union all则不会去重）
+        select id, name from tb1
+        union
+        select sid, sname frou stb1;

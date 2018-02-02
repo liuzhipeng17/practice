@@ -1,0 +1,44 @@
+create table t1(id int, name char(10)) default charset=utf8
+# 设置表的字符编码为utf8，而不是由操作系统默认（中文windows默认是gbk）
+
+    create table t1(
+                    id int,
+                    name char(10)
+    ) engine=innodb default charset=utf8;
+    # engine引擎；主要是为了支持事物，原子性操作（将多个步骤打包成原子性操作，如果中间出错，回滚到原来状态）
+    # myisam 不支持事物操作
+
+#1 创建表
+    create table t1(
+                    列名 类型 null(not null) default 2，
+                    # null    表示允许为空,
+                    # default 表示默认为整数2
+                    id int unsigned null auto_increment primary key,
+                    # auto_increment: 自增，一个表只能有一个自增列
+                    # primary key: 约束（不能重复，且不能为空），加速查找， 一个表只能有一个primary key
+                    # auto_increment 必须和Primary key联合使用
+    ）engine=innodb default charset=utf8;
+
+#2 清空表内容，不会删除表
+    delete from t1  # 在insert，id（自增列）会记录以前最大的值，再加1
+    truncate table t1 # 从1开始
+
+#3 删除表
+    drop table t1
+
+#4 查看表的结构（就是列名，以及列名的属性等）
+    describe t1 ; -- 或者desc t1
+
+#5 查看创建表的sql语句
+   show create table t1;
+
+#5 怎么讲一个文件的数据，加载到表中
+LOAD DATA LOCAL INFILE '/path/pet.txt' INTO TABLE pet; # Linux
+LOAD DATA LOCAL INFILE '/path/pet.txt' INTO TABLE pet LINES TERMINATED BY '\r\n'; # windows
+
+前提是pet.txt存在且格式和pet表匹配成功。假设表的结构是这样：
+name owner species sex birth death
+其中sex和death允许为空，如果值为空,pet.txt要\N表示，一定是大写N: 如pet.txt
+Whistler        Gwen    bird    \N      1997-12-09      \N
+
+

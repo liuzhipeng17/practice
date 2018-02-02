@@ -1,0 +1,20 @@
+class TcpServer(socketserver.BaseRequestHandler): # 通信循环
+    def handle(self):
+        print(self)
+        print(self.request) # self.request 等效于 accept(),建立连接
+
+这里的代码什么时候执行，而且为什么一定要求写handle函数
+
+self.RequestHandlerClass = TcpServer
+
+ self.RequestHandlerClass(request, client_address, self)实例化是在第二句里面执行的，会调用__init__
+
+    def __init__(self, request, client_address, server):
+        self.request = request
+        self.client_address = client_address
+        self.server = server
+        self.setup()
+        try:
+            self.handle()
+        finally:
+            self.finish()

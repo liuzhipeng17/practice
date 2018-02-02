@@ -1,0 +1,53 @@
+第一句为：
+obj = socketserver.ThreadingTCPServer(('127.0.0.1', 8080), TcpServer)
+
+
+# 实例化ThreadingTcpServer类，传递参数（('127.0.0.1', 8080), TcpServer)
+
+# 实际上实例化是， 调用TCPServer类的__init__函数
+    ## 先调用BaseServer.__init__
+        ###在BaseServer里面继承了属性：
+            #### self.server_address = server_address
+            #### self.RequestHandlerClass = RequestHandlerClass
+
+                note: server_address = ('127.0.0.1', 8080)
+                note: RequestHandlerClass = TcpServer
+
+    ## 继而执行：
+                    self.socket = socket.socket(self.address_family,
+                                            self.socket_type)
+             ### 继承了属性self.socket 就是socket对象
+
+    ## 接着：
+                if bind_and_activate:
+                    try:
+                        self.server_bind()
+                        self.server_activate()
+                    except:
+                        self.server_close()
+                        raise
+
+
+# 可以总结得到：
+    obj = socketserver.ThreadingTCPServer(('127.0.0.1', 8080), TcpServer)
+
+    等效于：obj等效获取了属性：
+     #### self.server_address = ('127.0.0.1', 8080)
+     #### self.RequestHandlerClass = TcpServer TcpSever的实例化是在第二句中的finish_request完成
+
+    而且，还执行了：
+    ###  self.socket = socket.socket(self.address_family,self.socket_type)
+    ###  self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    ###  self.socket.bind(self.server_address)
+    ###  self.socket.listen(self.request_queue_size)
+
+# 妈的，这上面的执行不就是tcp套接字编程里面
+    phone = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # 买手机
+    phone.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    phone.bind(('127.0.0.1', 8080)) # 插手机卡: ip和端口是元组，作为参数传给bind
+    phone.listen(5) # 开机
+
+
+
+
+

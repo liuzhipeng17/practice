@@ -1,0 +1,37 @@
+# time模块，提供时间数据表达形式
+# 1)3种表达：时间戳(timestamp)，格式化时间字符串
+
+    # 时间戳
+        # time.time()获取时间戳，返回的值是：从1970年开始走过的秒
+        # 时间戳是给计算机用的
+
+    # 格式化时间字符串
+        # time.strftime(time_format，time_)
+        # >>> time_format = "%Y-%m-%d %x"
+        # >>> time.strftime(time_format)
+        # '2017-08-25 08/25/17'
+        # >>>
+
+    # 时间元组
+        # time.localtime()，用于操作时间
+        # time.struct_time(tm_year=2017, tm_mon=8, tm_mday=25, tm_hour=11, tm_min=27, tm_sec=42, tm_wday=4, tm_yday=237, tm_isdst=0)
+# 2) 三种时间表达方式的转换
+
+    # 时间戳转时间元组(time.gmtime(),time.localtime())
+        gmtime是UTC时间，标准时间
+        localtime是北京时间，
+        time.localtime() 等效time.localtime(time.time())，里面的参数可以添加参数：时间戳
+
+    # 时间元组转换时间戳
+        time.mktime(时间元组参数),
+
+    # 结构化时间转格式化时间
+        time.strftime(format_time, 时间元组时间) ,如果第二个参数没有，会默认为time.localtime()
+
+    # 时间戳转换字符串（格式是死的 )
+        >>> time.ctime()
+        'Fri Aug 25 11:47:09 2017'
+
+    # 时间元组转换成字符串（格式是死的）
+
+    # time.sleep()相当于IO操作

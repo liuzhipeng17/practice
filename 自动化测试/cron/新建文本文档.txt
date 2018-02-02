@@ -1,0 +1,51 @@
+1 cron jobs
+2 cron table
+
+
+#1 如何安装cron
+
+	sudo apt-get install cron
+	
+	
+#2 crontab -e
+
+	*/1 * * * * date >> /tmp/log.txt
+	
+#3 crontab -l 
+	# 查看任务是否添加到crontab 里面
+	
+	
+$4 crontab 的基本组成
+
+	--系统服务crond
+	
+	--配置文件
+	
+	--配置工具crontab
+	
+	
+#5 crontab的配置文件格式
+
+	m h  dom mon dow   command
+
+	dom: 日期1-31
+	dow: 星期0-7
+	m:0-59
+	h:0-23
+	mon:1-12
+	
+	
+$6 逗号， 间断的值
+
+	0 12 1,10,20 * * servie httpd restart
+
+# - 连续的值
+	1-59 *  *  *  *  command
+
+#8 斜线， 每隔
+
+	*/2 *  *  *  *   command
+
+	1-59/2 *  *  *  * 
+	
+	

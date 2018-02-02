@@ -1,0 +1,11 @@
+之前：
+#1 创建连接
+        from sqlalchemy import create_engine
+        engine = create_engine(connect_str)
+#2 创建会话
+        from sqlalchemy.orm import sessionmaker
+        Session = sessionmaker(bind=engine)
+        session = Session()
+之后
+#1 关闭会话
+        session.close() # 不能少

@@ -1,6 +1,0 @@
-# 微信公众号相关：
-	1 微信公众号如何搭建
-	
-	2 微信如何存储accesstoken
-	
-	3 微信用户的openid, unionid

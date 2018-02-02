@@ -1,0 +1,17 @@
+import subprocess
+
+sp = supprocess.Popen('dir', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+# 解析一下stdout=subprocess.PIPE, 和stderr=subprocess.PIPE
+
+# subprocess.PIPE是一个管道，意思就是将dir这个命令的执行结果放到管道里。
+而不会打印命令结果输出到界面。
+
+# stdout这个参数，就是命令的标准输出，stdout=subprocess.PIPE,将标准输出放到管道里
+
+# 同理stderr=subprocess.PIPE将命令的错误输出放到管道里。
+
+# stdout 和stderr 必有一个是空，一个非空，不能两个同时非空，也不能同时空
+
+# sp.stdout.read()从管道读取标准输出
+
