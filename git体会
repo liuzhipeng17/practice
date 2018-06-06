@@ -1,0 +1,102 @@
+# tips
+
+    https://juejin.im/entry/5a1f7e096fb9a04527255d1e
+    https://www.jianshu.com/p/072587b47515
+
+# 术语简介
+
+    1 Workspace：工作区，平时我们写代码的地方。 - 可以理解成本地文件夹
+    2 Index：暂存区，写完代码后让它变成的待提交的状态。本地提交add后的代码，提交到index
+    3 Repository：本地仓库，提交暂存区的代码到这里，记录进入代码本地管理。commit后的代码提交到了Respository
+    4 Remote：远程仓库，将本地仓库的修改的代码提交到远程，可以供远程协作的人下载。-- git push 后代码到了remote repository
+  
+# git 工作流
+
+    1 Workspace --- git add ---> Index --- git commit ---> Local Repository --- git push ---> Remote Repository
+    2 Local Repository --- git checkout ---> Workspace 
+    3 Remote Repository --- git pull ---> Workspace
+    4 Remote Repository --- git fetch / git clone ---> Local Repository
+  
+
+# git 的安装和配置
+
+    1 ubuntu
+        sudo apt-get install git
+    2 windows
+        安装msysgit, 点击安装目录下git-gitbash,进入git客户端  
+        tip: 如果安装cmder，应该不用安装msysgit,直接安装git即可。
+    3 配置信息
+    git config --global user.name "user"
+    git config --global user.email "email"
+    4 查看用户信息
+        git config --list
+    
+# 创建工作区代码
+
+    分两种情况，拉公司项目代码，自己项目
+    1 第一种情况，git clone url -- 前提是配置本地计算机秘钥到remote Resposity服务器
+    2 第二种情况，
+        a. 先创建本地文件夹，管理项目： D:\test\MyApplicationTest
+        b. 右键git bash ;或者cmder打开,
+        c. git init
+        d. git add
+        e. git commit -m "first"
+        f. git remote add origin  remote_url  -- 给Remote Resposity起了个名字origin 
+        g. git push -u origin master  -- 远程创库默认存在master 分支
+    
+# Workspace ---Index
+
+    在本地修改代码后，将修改传值Index
+    1 git status  -- 先查看有哪些文件有修改，是否已经add到Index
+    2 git add .     -- 添加当前目录所有文件进入Index
+    3 git add <dir> -- 添加指定目录所有文件进入Index
+    4 git add <file> -- 添加指定文件进入Index
+    
+# Index --- Local Resposity
+
+    1 git commit -m <"message">  
+    
+# Local Resposity --- Remoet Resposity
+
+    1 git push <remote> <branch>  将本地仓库新记录提交到远程仓库，<remote>位置填写远程仓库名称，<branch>填写远程仓库需要提交的分支。 比如 git push origin master
+    
+    tips: 上面只是基本的提交代码，下面讲一些团队协作
+    
+# 协作
+
+    1 拉取远程创库代码
+        a. git pull <remote> <branch> -- <>表示可填项， remote为远程创库的名字，branch为远程创库分支
+            git push origin master
+            
+        tips: 将代码提交到远程仓库之前，最好先拉取一下远程代码，小伙伴们的最新代码，以免产生冲突。
+        
+    2 分支管理
+        # 查看
+            a. 查看所有本地分支 git branch
+            b. 查看所有远程分支 git branch -r
+            c. 查看所有本地分支，所有远程分支 git branch -a 
+        # 增
+            a. git branch <branch-name> 新建分支，但仍处于当前分支
+            b. git checkout -b <branch-name> 新建分支，并切换到新分支
+        # 切换
+            a. git checkout <branch-name> 切换分支，并更新工作区
+        # 删除
+            a. git branch -d <branch-name> 删除本地分支
+            b. git push origin --delete <branch-name> 删除远程分支
+            c. git push origin <branch-name> 将本地分支上传到远程创库
+    3 合并代码merge
+        1. 合并两个分支的代码
+        
+            git merge <branch-name> 合并<branch-name>分支到当前分支
+        
+        2. 如果合并出现冲突
+        
+            a 当前分支的状态xxxx|MERGING 状态，是因为两个分支都修改了同一份文件的代码，
+            b. 删除错误代码，且删除<<<< HEAD，======
+            c. 重新commit
+            
+        tips: <<<<< HEAD表示当前分支 ； ===== 表示合并分支的代码（即时<branch-name>的代码）
+            
+        ![image](https://user-gold-cdn.xitu.io/2017/11/30/1600b0470bd30d66?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+            
+        
