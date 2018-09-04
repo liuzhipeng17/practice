@@ -1,5 +1,6 @@
 EXTRACT(fmt from d), 提取时间中的特定部分
-fmt 为 YEAR, MONTH, DAY, HOUR, MINUTE, SECOND。其中YEAR, MONTH, DAY 可以和date匹配，也可以和TIMESTAMP匹配，但HOURE, MINUTE, SECOND必须和TIMESTAMP匹配
+fmt 为 YEAR, MONTH, DAY, HOUR, MINUTE, SECOND。其中YEAR, MONTH, DAY 可以和date匹配，也可以和TIMESTAMP匹配，
+但HOURE, MINUTE, SECOND必须和TIMESTAMP匹配
 -- extract 年月, 查询 create为2018年份的数据
 SELECT * FROM sz4eom_test.oms_entering_target_data_task t WHERE extract(YEAR FROM t.create_date) = 2018;
 
@@ -9,8 +10,16 @@ SELECT * FROM sz4eom_test.oms_entering_target_data_task t WHERE extract(MONTH FR
 -- 查询create为31月份的数据
 SELECT * FROM sz4eom_test.oms_entering_target_data_task t WHERE extract(DAY FROM t.create_date) = 31;
 
+-- 查询 reoord_data_time hour = 11的数据
+SELECT * FROM sz4eom_test.oms_entering_target_data_task t WHERE extract(hour FROM t.record_data_time)=11;
+
+-- 语法如下
 extract(year|month|day|hour|minute|second from column_name) = value
 
 
--- to_char函数，也可以实现提取时间的年月日
+-- to_char函数，是将时间转换成字符串
+
+-- to_date函数，是将字符串转换成时间
+
+-- to_timestamp函数，是转换
 
