@@ -13,6 +13,9 @@ SELECT * FROM sz4eom_test.oms_entering_target_data_task t WHERE extract(DAY FROM
 -- 查询 reoord_data_time hour = 11的数据
 SELECT * FROM sz4eom_test.oms_entering_target_data_task t WHERE extract(hour FROM t.record_data_time)=11;
 
+-- select 别名列
+SELECT extract(hour FROM t.record_data_time) "HOUR" FROM sz4eom_test.oms_entering_target_data_task t; -- "HOUR"为别名
+
 -- 语法如下
 extract(year|month|day|hour|minute|second from column_name) = value
 
