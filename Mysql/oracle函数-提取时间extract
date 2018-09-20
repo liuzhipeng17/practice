@@ -26,3 +26,6 @@ extract(year|month|day|hour|minute|second from column_name) = value
 
 -- to_timestamp函数，是转换
 
+-- date相减为天， timestamp相减为xx天xx时xx分xxs
+-- date转换成timestamp： date->char->timestamp
+SELECT (systimestamp - to_timestamp(to_char(t.AUDIT_SEND_DATE,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss'))xx FROM pca_audit_times t WHERE t.audit_info_id = '948B3072379E4B119E27414EE9CDF20F';
